@@ -1,4 +1,5 @@
 from termcolor import colored
+import colorama
 class Card:
     """ A Card class is represents a card that the player plays with. A card
     has the following proporties:
@@ -68,13 +69,13 @@ class Point:
     # initializes each point with a color
     def __init__(self, color, dot):
         if color == "white" and dot == "o":
-            self.value = whiteEmpty
+            self.value = colored("o","grey","on_white") #whiteEmpty
         elif color == 'white' and dot == "*":
-            self.value = whiteFilled
+            self.value = colored("*", "grey","on_white") #whiteFilled
         elif color == 'red' and dot == "o":
-            self.value = redEmpty
+            self.value = colored("o", "grey","on_red") #redEmpty
         elif color == 'red' and dot == "*":
-            self.value = redFilled
+            self.value = colored("*", "grey","on_red") #redFilled
         elif color == "_" and dot == "_":
             self.value = "_"
         self.card = None
@@ -109,16 +110,22 @@ def get_card(state_num, x=0, y=0):
 
 #prints all the cards for the player to see
 def print_cards():
+    colorama.init(autoreset=True)
     RF = colored("*", "grey","on_red")
     RE = colored("o", "grey","on_red")
     WF = colored("*", "grey","on_white")
     WE = colored("o","grey","on_white")
 
-    print()
     print("Here are the card configurations for you to choose:")
-    print("       ", "|R*|","       ", "|Wo|","       ", "|Ro|","       ", "|W*|")
-    print("|R* Wo|", "|Wo|","|Wo R*|", "|R*|","|Ro W*|", "|W*|","|W* Ro|", "|Ro|")
-    print("   1   ", " 2  ","   3   ", " 4  ","   5   ", " 6  ","   7   ", " 8  ")
+    print("  ", RF,"  ",WE,"  ",RE,"  ",WF)
+    print(RF+WE, WE,WE+RF,RF,RE+WF,WF,WF+RE,RE)
+    print("1 ","2","3 ","4","5 ","6","7 ","8")
+
+    #print()
+    #print("Here are the card configurations for you to choose:")
+    #print("       ", "|R*|","       ", "|Wo|","       ", "|Ro|","       ", "|W*|")
+    #print("|R* Wo|", "|Wo|","|Wo R*|", "|R*|","|Ro W*|", "|W*|","|W* Ro|", "|Ro|")
+    #print("   1   ", " 2  ","   3   ", " 4  ","   5   ", " 6  ","   7   ", " 8  ")
 '''||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
    |||              print with colors                               |||
    ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

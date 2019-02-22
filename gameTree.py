@@ -20,6 +20,7 @@ class State:
         self.board_state = board_config
         self.children = [] 
 
+    #inserts a new state into the children list
     @classmethod
     def add_child(self, new_child):
         self.children.append(new_child)
