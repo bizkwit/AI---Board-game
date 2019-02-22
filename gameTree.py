@@ -19,6 +19,10 @@ class State:
         self.parent = None
         self.board_state = board_config
         self.children = [] 
+
+    @classmethod
+    def add_child(self, new_child):
+        self.children.append(new_child)
         
     
 class GameTree:
