@@ -2,6 +2,7 @@ import board as board_m
 import card as card_m
 
 
+
 class Game:
     """ Stores all the date related to the game"""
 
@@ -31,6 +32,7 @@ def get_yes_no_input(message):
 
 
 print("Welcome to this awesome game")
+
 game.is_file_input = get_yes_no_input("Read moves from file? (y/n)")
 
 if game.is_file_input:
@@ -38,12 +40,19 @@ if game.is_file_input:
     file_input_list = read_file.readlines()
     read_file.close()
 
+
 game.player1_name = input("Player1, tell me your name: ")
+
 print("Ok " + game.player1_name + ", you have two options:")
 print("\t1: to play COLOURS\n\t2: to play DOTS")
 
+
 game.is_player1_color_option = input("Tell me you choice: ")
-#is_AI_play = get_yes_no_input("Do you want to challenge the AI? (y/n)")
+
+# if debug:
+#     is_AI_play = False
+# else:
+#     is_AI_play = get_yes_no_input("Do you want to challenge the AI? (y/n)")
 
 while game.is_player1_color_option != '1' and game.is_player1_color_option != '2':
     game.is_player1_color_option = input("Your choice is not valid, try again: ")
@@ -53,11 +62,13 @@ if game.is_player1_color_option == '1':
 else:
     game.is_player1_color_option = False
 
+
 game.player2_name = input("Player2, tell me your name: ")
 if game.is_player1_color_option:
     print(game.player2_name + ", you have no choice but to play DOTS")
 else:
     print(game.player2_name + ", you have no choice but to play COLOURS")
+
 input("Press ENTER.....")
 
 board_m.print_board()
@@ -69,16 +80,30 @@ def validate_move_string(input_s):
     is_valid_move_string = False
     # if regular move AND input size is correct AND first input is 0 and card rotation in range
     # and letter exist and Y-coord in range it is valid
-    if (game.cards_count != 0 and len(input_s) == 4 and input_s[0] == '0' and 0 < int(input_s[1]) < 9
-            and input_s[2] in board_m.letterConversion and 0 < int(input_s[3]) <= board_m.num_rows):
+
+    regular_move = game.cards_count != 0
+    len_4 = len(input_s) == 4
+    if len_4:
+        char_0_zero = input_s[0] == '0'
+        char_1_valid_num = 0 < int(input_s[1]) < 9
+        char_2_valid_letter = input_s[2] in board_m.letterConversion
+        char_3_valid_row = 0 < int(input_s[3]) <= board_m.num_rows
+
+    len_7 = len(input_s) == 7
+    if len_7:
+        char_0_valid_letter = input_s[0] in board_m.letterConversion
+        char_1_valid_row = 0 < int(input_s[1]) <= board_m.num_rows
+        char_4_valid_col = 0 < int(input_s[4]) <= board_m.num_cols
+        char_5_valid_letter = input_s[5] in board_m.letterConversion
+        char_6_valid_row = 0 < int(input_s[6]) <= board_m.num_rows
+
+    if (regular_move and len_4 and char_0_zero and char_1_valid_num and
+            char_2_valid_letter and char_3_valid_row):
         is_valid_move_string = True
-    elif (len(input_s) == 7 and input_s[0] in board_m.letterConversion and 0 < int(input_s[1]) <= board_m.num_rows
-          and input_s[0] in board_m.letterConversion and 0 < int(input_s[1]) <= board_m.num_rows
-          and 0 < int(input_s[4]) <= board_m.num_cols and input_s[5] in board_m.letterConversion
-          and 0 < int(input_s[6]) <= board_m.num_rows):
+    elif (len_7 and char_0_valid_letter and char_1_valid_row and
+          char_4_valid_col and char_5_valid_letter and char_6_valid_row):
         is_valid_move_string = True
     return is_valid_move_string
-
 
 def get_input_as_list(message=""):
     if game.is_file_input:
@@ -131,7 +156,7 @@ def place_card_from_input():
                 new_x1 = board_m.letterConversion[input_s[5]]
                 new_y1 = int(input_s[6]) - 1
                 card = card_m.get_card(int(input_s[4]), new_x1, new_y1)
-                if card != game.last_card_played and board_m.validate_recycling_move(placed_card, card):
+                if placed_card != game.last_card_played and board_m.validate_recycling_move(placed_card, card):
                     is_valid_move = True
         if not is_valid_move:
             if game.is_file_input:
@@ -146,7 +171,7 @@ def place_card_from_input():
                 game.cards_count -= 1
 
 
-print(game.player1_name + ", make your firs move: ", end='')
+print(game.player1_name + ", make your first move: ", end='')
 while not game.winner_found and game.moves_left >= 0:
     place_card_from_input()
     state = board_m.verify_winning_state(game.is_player1_color_option)
