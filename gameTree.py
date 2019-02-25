@@ -1,5 +1,3 @@
-import board as borad_m
-
 
 class State:
     ''' A state class represents a state which is a node in a game tree.
