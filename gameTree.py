@@ -21,6 +21,14 @@ class State:
     @classmethod
     def add_child(self, new_child):
         self.children.append(new_child)
+        
+    @classmethod
+    def set_parent(self, parent_node):
+        self.parent = parent_node
+
+    @classmethod
+    def set_state_value(self, new_value):
+        self.value = new_value
 
 
 class GameTree:
