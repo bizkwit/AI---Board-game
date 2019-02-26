@@ -10,15 +10,14 @@ class State:
         - children = a list of states as the children states
     '''
 
-
-    def __init__(self,player_num, board_config):
+    def __init__(self, player_num, board_config):
         self.player = player_num
         self.value = 0
         self.parent = None
         self.board_state = board_config
         self.children = []
 
-    #inserts a new state into the children list
+    # inserts a new state into the children list
     @classmethod
     def add_child(self, new_child):
         self.children.append(new_child)
@@ -31,13 +30,13 @@ class GameTree:
         - root = serves a the root of the current game tree
     '''
 
-    DEPTH = 4 #treated as a constant
+    DEPTH = 4  # treated as a constant
 
-    #defult constructor
+    # default constructor
     def __init__ (self):
             self.root = None
 
-    #updates the root to the current state
+    # updates the root to the current state
     @classmethod
     def update_root(current_state):
         root = current_state

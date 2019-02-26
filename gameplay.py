@@ -32,7 +32,7 @@ def try_parse_int(s):
 
 
 def get_yes_no_input(message):
-    answer = input(message)
+    answer = input(message + " (y/n)")
     if answer == 'y' or answer == 'Y':
         return True
     else:
@@ -137,79 +137,83 @@ def place_card_from_input():
             if game.cards_count > 0:
                 game.cards_count -= 1
 
-
+play_again = True
 print("Welcome to this awesome game")
 
-game.is_file_input = get_yes_no_input("Read moves from file? (y/n)")
+while play_again:
+    game.is_file_input = get_yes_no_input("Read moves from file?")
 
-if game.is_file_input:
-    read_file = open("input.txt", "r")
-    file_input_list = read_file.readlines()
-    read_file.close()
-
-
-game.player1_name = input("Player1, tell me your name: ")
-
-print("Ok " + game.player1_name + ", you have two options:")
-print("\t1: to play COLOURS\n\t2: to play DOTS")
+    if game.is_file_input:
+        read_file = open("input.txt", "r")
+        file_input_list = read_file.readlines()
+        read_file.close()
 
 
-game.is_player1_color_option = input("Tell me you choice: ")
+    game.player1_name = input("Player1, tell me your name: ")
 
-# is_AI_play = get_yes_no_input("Do you want to challenge the AI? (y/n)")
-
-while game.is_player1_color_option != '1' and game.is_player1_color_option != '2':
-    game.is_player1_color_option = input("Your choice is not valid, try again: ")
-
-if game.is_player1_color_option == '1':
-    game.is_player1_color_option = True
-else:
-    game.is_player1_color_option = False
+    print("Ok " + game.player1_name + ", you have two options:")
+    print("\t1: to play COLOURS\n\t2: to play DOTS")
 
 
-game.player2_name = input("Player2, tell me your name: ")
-if game.is_player1_color_option:
-    print(game.player2_name + ", you have no choice but to play DOTS")
-else:
-    print(game.player2_name + ", you have no choice but to play COLOURS")
+    game.is_player1_color_option = input("Tell me you choice: ")
 
-print("\nExample of valid moves:\n\tRegular Move: '0 5 H 1' or '0 5 h 1' "
-      "\n\tRecycling move: 'F 2 F 3 3 A 2' or 'f 2 f 3 3 a 2'")
-input("\nPress ENTER.....")
+    # is_AI_play = get_yes_no_input("Do you want to challenge the AI?")
 
-board.print_board()
-card_m.print_cards()
+    while game.is_player1_color_option != '1' and game.is_player1_color_option != '2':
+        game.is_player1_color_option = input("Your choice is not valid, try again: ")
 
-while not game.winner_found and game.moves_left >= 0:
-    print("\nTurn: " + str(game.moves_max - game.moves_left + 1) + "/" + str(game.moves_max)
-          + "\t Cards left: " + str(game.cards_count))
-    if game.is_current_player1:
-        print(game.player1_name + "'s turn: ", end='')
+    if game.is_player1_color_option == '1':
+        game.is_player1_color_option = True
     else:
-        print(game.player2_name + "'s turn: ", end='')
+        game.is_player1_color_option = False
 
-    place_card_from_input()
+
+    game.player2_name = input("Player2, tell me your name: ")
+    if game.is_player1_color_option:
+        print(game.player2_name + ", you have no choice but to play DOTS")
+    else:
+        print(game.player2_name + ", you have no choice but to play COLOURS")
+
+    print("\nExample of valid moves:\n\tRegular Move: '0 5 H 1' or '0 5 h 1' "
+          "\n\tRecycling move: 'F 2 F 3 3 A 2' or 'f 2 f 3 3 a 2'")
+    input("\nPress ENTER.....")
+
     board.print_board()
     card_m.print_cards()
-    state = board.verify_winning_state()
 
-    if state == 0:
-        game.is_current_player1 = not game.is_current_player1
-    elif state == 1 or state == 2:
-        game.winner_found = True
-    elif state == 3:
-        game.moves_left = 0
-    game.moves_left -= 1
+    while not game.winner_found and game.moves_left >= 0:
+        print("\nTurn: " + str(game.moves_max - game.moves_left + 1) + "/" + str(game.moves_max)
+              + "\t Cards left: " + str(game.cards_count))
+        if game.is_current_player1:
+            print(game.player1_name + "'s turn: ", end='')
+        else:
+            print(game.player2_name + "'s turn: ", end='')
 
-if not game.winner_found:
-    print("Game ended with a tie")
-elif state == 1:  # colors won
-    if game.is_player1_color_option:
-        print("Congratulations " + game.player1_name + ", you WON !!!")
-    else:
-        print("Congratulations " + game.player2_name + ", you WON !!!")
-elif state == 2:  # dots won
-    if game.is_player1_color_option:
-        print("Congratulations " + game.player2_name + ", you WON !!!")
-    else:
-        print("Congratulations " + game.player1_name + ", you WON !!!")
+        place_card_from_input()
+        board.print_board()
+        card_m.print_cards()
+        state = board.verify_winning_state()
+
+        if state == 0:
+            game.is_current_player1 = not game.is_current_player1
+        elif state == 1 or state == 2:
+            game.winner_found = True
+        elif state == 3:
+            game.moves_left = 0
+        game.moves_left -= 1
+    print("=================================")
+    if not game.winner_found:
+        print("Game ended with a tie")
+    elif state == 1:  # colors won
+        if game.is_player1_color_option:
+            print("Congratulations " + game.player1_name + ", you WON !!!")
+        else:
+            print("Congratulations " + game.player2_name + ", you WON !!!")
+    elif state == 2:  # dots won
+        if game.is_player1_color_option:
+            print("Congratulations " + game.player2_name + ", you WON !!!")
+        else:
+            print("Congratulations " + game.player1_name + ", you WON !!!")
+    print("=================================")
+
+    play_again = get_yes_no_input("\nDo you want to play one more time?")
