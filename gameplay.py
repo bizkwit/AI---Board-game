@@ -156,10 +156,7 @@ print("\t1: to play COLOURS\n\t2: to play DOTS")
 
 game.is_player1_color_option = input("Tell me you choice: ")
 
-# if debug:
-#     is_AI_play = False
-# else:
-#     is_AI_play = get_yes_no_input("Do you want to challenge the AI? (y/n)")
+# is_AI_play = get_yes_no_input("Do you want to challenge the AI? (y/n)")
 
 while game.is_player1_color_option != '1' and game.is_player1_color_option != '2':
     game.is_player1_color_option = input("Your choice is not valid, try again: ")

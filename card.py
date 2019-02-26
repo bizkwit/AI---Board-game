@@ -69,13 +69,14 @@ class Point:
     # initializes each point with a color
     def __init__(self, color, dot):
         if color == "white" and dot == "o":
-            self.value = whiteEmpty
+
+            self.value = whiteEmpty #colored("o","grey","on_white") #
         elif color == 'white' and dot == "*":
-            self.value = whiteFilled
+            self.value = whiteFilled #colored("*", "grey","on_white") #
         elif color == 'red' and dot == "o":
-            self.value = redEmpty
+            self.value = redEmpty #colored("o", "grey","on_red") #
         elif color == 'red' and dot == "*":
-            self.value = redFilled
+            self.value = redFilled #colored("*", "grey","on_red") #
         elif color == "_" and dot == "_":
             self.value = "_"
         self.card = None
