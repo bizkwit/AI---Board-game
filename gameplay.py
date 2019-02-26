@@ -120,14 +120,16 @@ def place_card_from_input():
                 new_x1 = input_list[5]
                 new_y1 = input_list[6] - 1
                 card = card_m.get_card(input_list[4], new_x1, new_y1)
-                if placed_card != game.last_card_played and board.validate_recycling_move(placed_card, card):
+                if placed_card == game.last_card_played:
+                    print(" *** You can't recycle the last-played card ***")
+                elif board.validate_recycling_move(placed_card, card):
                     is_valid_move = True
 
         if not is_valid_move:
             if game.is_file_input:
                 game.is_file_input = False
                 print("Next moves will be done in manual mode.")
-            input_s = get_valid_input("Input not valid, try again: ")
+            input_list = get_valid_input("Input not valid, try again: ")
         else:
             board.place_card(card)
             game.last_card_played = card
