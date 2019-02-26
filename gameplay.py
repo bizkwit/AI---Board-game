@@ -124,7 +124,8 @@ def place_card_from_input():
                     print(" *** You can't recycle the last-played card ***")
                 elif board.validate_recycling_move(placed_card, card):
                     is_valid_move = True
-
+                elif placed_card == card:
+                    print(" *** You must change card's rotation, position or both ***")
         if not is_valid_move:
             if game.is_file_input:
                 game.is_file_input = False

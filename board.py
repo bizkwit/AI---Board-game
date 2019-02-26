@@ -66,7 +66,8 @@ class Board:
 
     def validate_recycling_move(self, card, new_card):
         """ Validate a recycling move"""
-        if card is not None:
+        if card is not None and new_card is not None\
+                and card != new_card:
             is_valid_remove = True
             x1 = card.p1.x_coord
             y1 = card.p1.y_coord

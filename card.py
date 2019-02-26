@@ -17,6 +17,17 @@ class Card:
         self.p2.card = self
         self.points = [self.p1, self.p2]
 
+    def __eq__(self, other):
+        is_equal = False
+        if self is other:
+            is_equal = True
+        elif type(self) == type(other)\
+                and self.p1 == other.p1\
+                and self.p2 == other.p2\
+                and self.is_horizontal == other.is_horizontal:
+            is_equal = True
+        return is_equal
+
     def set_x(self, x):
         self.p1.x_coord = x
         if self.is_horizontal:
@@ -85,6 +96,16 @@ class Point:
         self.x_coord = 0
         self.y_coord = 0
 
+    def __eq__(self, other):
+        is_equal = False
+        if self is other:
+            is_equal = True
+        elif type(self) == type(other)\
+                and self.y_coord == other.y_coord\
+                and self.x_coord == other.x_coord\
+                and self.value == other.value:
+            is_equal = True
+        return is_equal
 
 # returns the card with specific coordinates
 def get_card(state_num, x=0, y=0):
