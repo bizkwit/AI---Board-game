@@ -19,8 +19,6 @@ class Game:
         self.winner_found = False
 
 
-game = Game()
-board = board_m.Board(12, 8)
 letterConversion = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7}
 
 
@@ -82,7 +80,7 @@ def validate_and_parse_move(input):
                 input[6] = try_parse_int(input[6])  # 1st point new y coordinate
                 # verifying valid card position and if x and y coordinates are inside board boundaries
                 if 0 < input[4] < 9 and 0 < input[6] < board.num_rows and input[5] in letterConversion:
-                    input[5] = board.letterConversion[input[5]]  # 1st point new x coordinate
+                    input[5] = letterConversion[input[5]]  # 1st point new x coordinate
                     is_valid_move_string = True
     return is_valid_move_string
 
@@ -95,7 +93,6 @@ def get_valid_input(message=""):
         if not is_valid_input:
             if game.is_file_input:
                 game.is_file_input = False
-                print("Input: is not valid.")
                 print("Next moves will be done in manual mode.")
             input_list = get_input_as_list("Input not valid, try again: ")
         else:
@@ -118,11 +115,11 @@ def place_card_from_input():
             x2 = input_list[2]
             y2 = input_list[3] - 1
             # verifying if the points belong to the same card
-            if board_m.board[y1][x1].card == board[y2][x2].card:
-                placed_card = board[y1][x1].card
-                new_x1 = letterConversion[input_list[5]]
+            if board.board[y1][x1].card == board.board[y2][x2].card:
+                placed_card = board.board[y1][x1].card
+                new_x1 = input_list[5]
                 new_y1 = input_list[6] - 1
-                card = card_m.get_card(input_s[4], new_x1, new_y1)
+                card = card_m.get_card(input_list[4], new_x1, new_y1)
                 if placed_card != game.last_card_played and board.validate_recycling_move(placed_card, card):
                     is_valid_move = True
 
@@ -137,10 +134,14 @@ def place_card_from_input():
             if game.cards_count > 0:
                 game.cards_count -= 1
 
+
 play_again = True
 print("Welcome to this awesome game")
 
 while play_again:
+
+    game = Game()
+    board = board_m.Board(12, 8)
     game.is_file_input = get_yes_no_input("Read moves from file?")
 
     if game.is_file_input:
@@ -148,12 +149,10 @@ while play_again:
         file_input_list = read_file.readlines()
         read_file.close()
 
-
     game.player1_name = input("Player1, tell me your name: ")
 
     print("Ok " + game.player1_name + ", you have two options:")
     print("\t1: to play COLOURS\n\t2: to play DOTS")
-
 
     game.is_player1_color_option = input("Tell me you choice: ")
 
@@ -166,7 +165,6 @@ while play_again:
         game.is_player1_color_option = True
     else:
         game.is_player1_color_option = False
-
 
     game.player2_name = input("Player2, tell me your name: ")
     if game.is_player1_color_option:

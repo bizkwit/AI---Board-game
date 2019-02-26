@@ -111,22 +111,22 @@ def get_card(state_num, x=0, y=0):
 
 #prints all the cards for the player to see
 def print_cards():
-    colorama.init(autoreset=True)
-    RF = colored("*", "grey","on_red")
-    RE = colored("o", "grey","on_red")
-    WF = colored("*", "grey","on_white")
-    WE = colored("o","grey","on_white")
+    #colorama.init(autoreset=True)
+    #RF = colored("*", "grey","on_red")
+    #RE = colored("o", "grey","on_red")
+    #WF = colored("*", "grey","on_white")
+    #WE = colored("o","grey","on_white")
 
-    print("Here are the card configurations for you to choose:")
-    print("  ", RF,"  ",WE,"  ",RE,"  ",WF)
-    print(RF+WE, WE,WE+RF,RF,RE+WF,WF,WF+RE,RE)
-    print("1 ","2","3 ","4","5 ","6","7 ","8")
-
-    #print()
     #print("Here are the card configurations for you to choose:")
-    #print("       ", "|R*|","       ", "|Wo|","       ", "|Ro|","       ", "|W*|")
-    #print("|R* Wo|", "|Wo|","|Wo R*|", "|R*|","|Ro W*|", "|W*|","|W* Ro|", "|Ro|")
-    #print("   1   ", " 2  ","   3   ", " 4  ","   5   ", " 6  ","   7   ", " 8  ")
+    #print("  ", RF,"  ",WE,"  ",RE,"  ",WF)
+    #print(RF+WE, WE,WE+RF,RF,RE+WF,WF,WF+RE,RE)
+    #print("1 ","2","3 ","4","5 ","6","7 ","8")
+
+    print()
+    print("Here are the card configurations for you to choose:")
+    print("       ", "|R*|","       ", "|Wo|","       ", "|Ro|","       ", "|W*|")
+    print("|R* Wo|", "|Wo|","|Wo R*|", "|R*|","|Ro W*|", "|W*|","|W* Ro|", "|Ro|")
+    print("   1   ", " 2  ","   3   ", " 4  ","   5   ", " 6  ","   7   ", " 8  ")
 '''||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
    |||              print with colors                               |||
    ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
