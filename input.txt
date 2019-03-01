@@ -29,7 +29,6 @@ c 7 d 7 4 h 7
 a 7 b 7 6 c 7
 a 6 b 6 4 d 7
 e 4 f 4 2 b 6
-
 h 7 h 8 7 g 7
 
 g 6 h 6 5 a 8
