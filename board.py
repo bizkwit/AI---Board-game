@@ -1,5 +1,13 @@
 import card as card_m
 from itertools import groupby
+from enum import Enum
+
+
+class Winner(Enum):
+    NONE = 0
+    COLORS = 1
+    DOTS = 2
+    TIE = 3
 
 
 class Board:
@@ -82,7 +90,7 @@ class Board:
                         is_valid_remove = False
                 else:
                     # verify if there is any card above
-                    if y2 < self.num_rows-1 and self.board[y2+1][x2] != "_":
+                    if y2 < self.num_rows-1 and self.board[y2+1][x2].value != "_":
                         is_valid_remove = False
 
             if is_valid_remove:
@@ -100,151 +108,78 @@ class Board:
         return is_valid_move
 
     def verify_winning_state(self):
-        """ state: 0=no win ; 1=colors win ; 2=dots win ; 3=tie"""
-        state = 0
-        rows = [[] for i in range(self.num_rows)]
-        cols = [[] for i in range(self.num_cols)]
-        diag_front = [[] for i in range(self.num_rows + self.num_cols - 1)]
-        diag_back = [[] for i in range(len(diag_front))]
+        occurrence_winner = Winner.NONE
+        rows_colors, rows_dots, cols_colors, cols_dots, \
+        diag_front_colors, diag_front_dots, diag_back_colors, diag_back_dots = [], [], [], [], [], [], [], []
+
+        for i in range(self.num_rows):
+            rows_colors.append('')
+            rows_dots.append('')
+
+        for i in range(self.num_cols):
+            cols_colors.append('')
+            cols_dots.append('')
+
+        for i in range(self.num_rows + self.num_cols - 1):
+            diag_front_colors.append('')
+            diag_front_dots.append('')
+
+        for i in range(len(diag_front_colors)):
+            diag_back_colors.append('')
+            diag_back_dots.append('')
+
         min_diag = -self.num_rows + 1
+
         for y in range(self.num_rows):
             for x in range(self.num_cols):
-                rows[y].append(self.board[y][x].value)
-                cols[x].append(self.board[y][x].value)
-                diag_front[x + y].append(self.board[y][x].value)
-                diag_back[-min_diag + x - y].append(self.board[y][x].value)
-        for row in rows:
-            # occurrences_row = [(k, sum(1 for i in g)) for k, g in groupby(row)]
-            str1 = ''.join(row)
-            str2 = str1.replace('R', '')
-            str3 = str2.replace('W', '')
-            str4 = str3.replace('_', '')
-            occurrences = [(k, len(list(g))) for k, g in groupby(str4)]
-            for arrays in occurrences:
-                if arrays[1] == 4:
-                    state = 2
-                    """if is_player1_color_option:
-                        print("Consecutive " + arrays[0] + " found in a row. Color player, you lost the game. Dots player you win!")
+                rows_colors[y] += self.board[y][x].color
+                rows_dots[y] += self.board[y][x].dot
+                cols_colors[x] += self.board[y][x].color
+                cols_dots[x] += self.board[y][x].dot
+                diag_front_colors[x + y] += self.board[y][x].color
+                diag_front_dots[x + y] += self.board[y][x].dot
+                diag_back_colors[-min_diag + x - y] += self.board[y][x].color
+                diag_back_dots[-min_diag + x - y] += self.board[y][x].dot
+
+        arrays_of_colors_and_dots = [rows_colors, rows_dots, cols_colors, cols_dots, diag_front_colors,
+                                    diag_front_dots, diag_back_colors, diag_back_dots]
+        # running this outside the loop to be able to pass the True for is_row attribute
+        occurrence_winner = verify_occurences(arrays_of_colors_and_dots[0],
+                                              arrays_of_colors_and_dots[1], occurrence_winner, True)
+        for i in range(2, len(arrays_of_colors_and_dots), 2):
+            if occurrence_winner == Winner.TIE:
+                return occurrence_winner
+            occurrence_winner = verify_occurences(arrays_of_colors_and_dots[i],
+                                                  arrays_of_colors_and_dots[i+1], occurrence_winner)
+        return occurrence_winner
+
+
+def verify_occurences(colors_list, dots_list, occurrence_winner, is_rows=False):
+        for i in range(len(colors_list)):
+            occurrences_colors = [(k, len(list(g))) for k, g in groupby(colors_list[i])]
+            occurrences_dots = [(k, len(list(g))) for k, g in groupby(dots_list[i])]
+            # verifying if any consecutive colors
+            for arrays in occurrences_colors:
+                if arrays[0] != "_" and arrays[1] >= 4:
+                    if occurrence_winner == Winner.DOTS:
+                        occurrence_winner = Winner.TIE
+                        # if we already have a tie, we stop verifying any further
+                        return occurrence_winner
                     else:
-                        print("Congratulation! Consecutive " + arrays[0] + " found in a row. Dots player, you won the game.")
-                    return True"""
-        for column in cols:
-            str1 = ''.join(column)
-            str2 = str1.replace('R', '')
-            str3 = str2.replace('W', '')
-            str4 = str3.replace('_', '')
-            occurrences = [(k, len(list(g))) for k, g in groupby(str4)]
-            for arrays in occurrences:
-                if arrays[1] == 4:
-                    state = 2
-                    """if is_player1_color_option == True:
-                        print("Consecutive " + arrays[0] + " found in a column. Color player, you lost the game. Dots player you win!")
-                    if is_player1_color_option == False:
-                        print("Congratulation! Consecutive " + arrays[0] + " found in a column. Dots player, you won the game.")
-                    return True"""
-        for diagonal in diag_front:
-            str1 = ''.join(diagonal)
-            str2 = str1.replace('R', '')
-            str3 = str2.replace('W', '')
-            str4 = str3.replace('_', '')
-            occurrences = [(k, len(list(g))) for k, g in groupby(str4)]
-            for arrays in occurrences:
-                if arrays[1] == 4:
-                    state = 2
-                    """if is_player1_color_option == True:
-                        print("Consecutive " + arrays[0] + " found in a diagonal. Color player, you lost the game. Dots player you win!")
-                    if is_player1_color_option == False:
-                        print("Congratulation! Consecutive " + arrays[0] + " found in a diagonal. Dots player, you won the game.")
-                    return True"""
-        for diagonal in diag_back:
-            str1 = ''.join(diagonal)
-            str2 = str1.replace('R', '')
-            str3 = str2.replace('W', '')
-            str4 = str3.replace('_', '')
-            occurrences = [(k, len(list(g))) for k, g in groupby(str4)]
-            for arrays in occurrences:
-                if arrays[1] == 4:
-                    state = 2
-                    """if is_player1_color_option == True:
-                        print("Consecutive " + arrays[0] + " found in a diagonal. Color player, you lost the game. Dots player you win!")
-                    if is_player1_color_option == False:
-                        print("Congratulation! Consecutive " + arrays[0] + " found in a diagonal. Dots player, you won the game.")
-                    return True"""
-        for row in rows:
-            # occurrences_row = [(k, sum(1 for i in g)) for k, g in groupby(row)]
-            str1 = ''.join(row)
-            str2 = str1.replace('*', '')
-            str3 = str2.replace('o', '')
-            str4 = str3.replace('_', '')
-            occurrences = [(k, len(list(g))) for k, g in groupby(str4)]
-            for arrays in occurrences:
-                if arrays[1] == 4:
-                    if state == 2:
-                        state = 3
-                        # If we already have a state 3, we return right away
-                        return state
+                        occurrence_winner = Winner.COLORS
+                    break
+            # verifying if any consecutive dots
+            for arrays in occurrences_dots:
+                if arrays[0] != "_" and arrays[1] >= 4:
+                    if occurrence_winner == Winner.COLORS:
+                        occurrence_winner = Winner.TIE
+                        # if we already have a tie, we stop verifying any further
+                        return occurrence_winner
                     else:
-                        state = 1
-                    """if is_player1_color_option == False:
-                        print("Consecutive " + arrays[0] + " found in a row. Dots player, you lost the game. Color player you win!")
-                    if is_player1_color_option == True:
-                        print("Congratulation! Consecutive " + arrays[0] + " found in a row. Color player, you won the game.")
-                    return True"""
-        for column in cols:
-            str1 = ''.join(column)
-            str2 = str1.replace('*', '')
-            str3 = str2.replace('o', '')
-            str4 = str3.replace('_', '')
-            occurrences = [(k, len(list(g))) for k, g in groupby(str4)]
-            for arrays in occurrences:
-                if arrays[1] == 4:
-                    if state == 2:
-                        state = 3
-                        # If we already have a state 3, we return right away
-                        return state
-                    else:
-                        state = 1
-                    """if is_player1_color_option == False:
-                        print("Consecutive " + arrays[0] + " found in a column. Dots player, you lost the game. Color player you win")
-                    if is_player1_color_option == True:
-                        print("Congratulation! Consecutive " + arrays[0] + " found in a column. Color player, you won the game.")
-                    return True"""
-        for diagonal in diag_front:
-            str1 = ''.join(diagonal)
-            str2 = str1.replace('*', '')
-            str3 = str2.replace('o', '')
-            str4 = str3.replace('_', '')
-            occurrences = [(k, len(list(g))) for k, g in groupby(str4)]
-            for arrays in occurrences:
-                if arrays[1] == 4:
-                    if state == 2:
-                        state = 3
-                        # If we already have a state 3, we return right away
-                        return state
-                    else:
-                        state = 1
-                    """if is_player1_color_option == False:
-                        print("Consecutive " + arrays[0] + " found in a diagonal. Dots player, you lost the game. Color player you win")
-                    if is_player1_color_option == True:
-                        print("Congratulation! Consecutive " + arrays[0] + " found in a diagonal. Color player, you won the game.")
-                    return True"""
-        for diagonal in diag_back:
-            str1 = ''.join(diagonal)
-            str2 = str1.replace('*', '')
-            str3 = str2.replace('o', '')
-            str4 = str3.replace('_', '')
-            occurrences = [(k, len(list(g))) for k, g in groupby(str4)]
-            for arrays in occurrences:
-                if arrays[1] == 4:
-                    if state == 2:
-                        state = 3
-                        # If we already have a state 3, we return right away
-                        return state
-                    else:
-                        state = 1
-                    """if is_player1_color_option == False:
-                        print("Consecutive " + arrays[0] + " found in a diagonal. Dots player, you lost the game. Color player you win")
-                    if is_player1_color_option == True:
-                        print("Congratulation! Consecutive " + arrays[0] + " found in a diagonal. Color player, you won the game.")
-                    return True"""
-        return state
+                        occurrence_winner = Winner.DOTS
+                    break
+            # if we already have a tie or if there are no more card on a row, we stop verifying any further
+            if occurrence_winner == Winner.TIE or \
+                    is_rows and len(occurrences_colors) == 1 and occurrences_colors[0][0] == "_":
+                break
+        return occurrence_winner

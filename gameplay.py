@@ -11,6 +11,8 @@ class Game:
         self.moves_max = 60
         self.moves_left = 60
 
+        self.game_mode_AI = False
+
         self.is_player1_color_option = None
         self.is_current_player1 = True
         self.player1_name = "Player1"
@@ -51,36 +53,36 @@ def get_input_as_list(message=""):
     return input_s
 
 
-def validate_and_parse_move(input):
-    """ input: a list of strings """
+def validate_and_parse_move(inputs):
+    """ inputs: a list of strings """
     is_valid_move_string = False
     # if regular move AND input size is correct AND first input is 0 and card rotation in range
     # and letter exist and Y-coord in range it is valid
-    input_length = len(input)
+    input_length = len(inputs)
     if input_length == 4:
         # regular move starts with a 0 as input
-        if game.cards_count != 0 and input[0] == '0' and input[2] in letterConversion:
-            input[1] = try_parse_int(input[1])  # card position(state)
-            input[2] = letterConversion[input[2]]  # 1st point current X coordinate
-            input[3] = try_parse_int(input[3])  # 1st point current y coordinate
+        if game.cards_count != 0 and inputs[0] == '0' and inputs[2] in letterConversion:
+            inputs[1] = try_parse_int(inputs[1])  # card position(state)
+            inputs[2] = letterConversion[inputs[2]]  # 1st point current X coordinate
+            inputs[3] = try_parse_int(inputs[3])  # 1st point current y coordinate
             # verifying valid card position and if y coordinate is inside board boundaries
-            if 0 < input[1] < 9 and 0 < input[3] <= board.num_rows:
+            if 0 < inputs[1] < 9 and 0 < inputs[3] <= board.num_rows:
                 is_valid_move_string = True
 
     elif input_length == 7:
         # validation of x coordinates for points to be recycled
-        if input[0] in letterConversion and input[2] in letterConversion:
-            input[0] = letterConversion[input[0]]  # 1st point current x coordinate
-            input[2] = letterConversion[input[2]]  # 2nd point current x coordinate
-            input[1] = try_parse_int(input[1])  # 1st point current y coordinate
-            input[3] = try_parse_int(input[3])  # 2st point current y coordinate
+        if inputs[0] in letterConversion and inputs[2] in letterConversion:
+            inputs[0] = letterConversion[inputs[0]]  # 1st point current x coordinate
+            inputs[2] = letterConversion[inputs[2]]  # 2nd point current x coordinate
+            inputs[1] = try_parse_int(inputs[1])  # 1st point current y coordinate
+            inputs[3] = try_parse_int(inputs[3])  # 2st point current y coordinate
             # validation of y coordinates for points to be recycled
-            if 0 < input[1] <= board.num_rows and 0 < input[3] <= board.num_rows:
-                input[4] = try_parse_int(input[4])  # card position(state)
-                input[6] = try_parse_int(input[6])  # 1st point new y coordinate
+            if 0 < inputs[1] <= board.num_rows and 0 < inputs[3] <= board.num_rows:
+                inputs[4] = try_parse_int(inputs[4])  # card position(state)
+                inputs[6] = try_parse_int(inputs[6])  # 1st point new y coordinate
                 # verifying valid card position and if x and y coordinates are inside board boundaries
-                if 0 < input[4] < 9 and 0 < input[6] < board.num_rows and input[5] in letterConversion:
-                    input[5] = letterConversion[input[5]]  # 1st point new x coordinate
+                if 0 < inputs[4] < 9 and 0 < inputs[6] < board.num_rows and inputs[5] in letterConversion:
+                    inputs[5] = letterConversion[inputs[5]]  # 1st point new x coordinate
                     is_valid_move_string = True
     return is_valid_move_string
 
@@ -193,24 +195,24 @@ while play_again:
         place_card_from_input()
         board.print_board()
         card_m.print_cards()
-        state = board.verify_winning_state()
+        winner = board.verify_winning_state()
 
-        if state == 0:
+        if winner == board_m.Winner.NONE:
             game.is_current_player1 = not game.is_current_player1
-        elif state == 1 or state == 2:
+        elif winner == board_m.Winner.COLORS or winner == board_m.Winner.DOTS:
             game.winner_found = True
-        elif state == 3:
+        elif winner == board_m.Winner.TIE:
             game.moves_left = 0
         game.moves_left -= 1
     print("=================================")
     if not game.winner_found:
         print("Game ended with a tie")
-    elif state == 1:  # colors won
+    elif winner == board_m.Winner.COLORS:  # colors won
         if game.is_player1_color_option:
             print("Congratulations " + game.player1_name + ", you WON !!!")
         else:
             print("Congratulations " + game.player2_name + ", you WON !!!")
-    elif state == 2:  # dots won
+    elif winner == board_m.Winner.DOTS:  # dots won
         if game.is_player1_color_option:
             print("Congratulations " + game.player2_name + ", you WON !!!")
         else:

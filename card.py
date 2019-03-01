@@ -59,12 +59,6 @@ class Card:
     #  self.p1.y_coord = y
 
 
-redFilled = 'R*'
-whiteFilled = 'W*'
-redEmpty = 'Ro'
-whiteEmpty = 'Wo'
-
-
 class Point:
     """A point class is an inner class of the Card class. Points have the
     following properties:
@@ -79,17 +73,10 @@ class Point:
 
     # initializes each point with a color
     def __init__(self, color, dot):
-        if color == "white" and dot == "o":
-
-            self.value = whiteEmpty #colored("o","grey","on_white") #
-        elif color == 'white' and dot == "*":
-            self.value = whiteFilled #colored("*", "grey","on_white") #
-        elif color == 'red' and dot == "o":
-            self.value = redEmpty #colored("o", "grey","on_red") #
-        elif color == 'red' and dot == "*":
-            self.value = redFilled #colored("*", "grey","on_red") #
-        elif color == "_" and dot == "_":
-            self.value = "_"
+        if color == '_' or dot == '_':
+            self.value = color
+        else:
+            self.value = color + dot
         self.card = None
         self.color = color
         self.dot = dot
@@ -112,21 +99,21 @@ def get_card(state_num, x=0, y=0):
     if 0 <= state_num >= 9:
         return
     elif state_num == 1:
-        card = Card(Point("red", "*"), Point("white", "o"), True)
+        card = Card(Point("R", "*"), Point("W", "o"), True)
     elif state_num == 2:
-        card = Card(Point("white", "o"), Point("red", "*"), False)
+        card = Card(Point("W", "o"), Point("R", "*"), False)
     elif state_num == 3:
-        card = Card(Point("white", "o"), Point("red", "*"), True)
+        card = Card(Point("W", "o"), Point("R", "*"), True)
     elif state_num == 4:
-        card = Card(Point("red", "*"), Point("white", "o"), False)
+        card = Card(Point("R", "*"), Point("W", "o"), False)
     elif state_num == 5:
-        card = Card(Point("red", "o"), Point("white", "*"), True)
+        card = Card(Point("R", "o"), Point("W", "*"), True)
     elif state_num == 6:
-        card = Card(Point("white", "*"), Point("red", "o"), False)
+        card = Card(Point("W", "*"), Point("R", "o"), False)
     elif state_num == 7:
-        card = Card(Point("white", "*"), Point("red", "o"), True)
+        card = Card(Point("W", "*"), Point("R", "o"), True)
     else:
-        card = Card(Point("red", "o"), Point("white", "*"), False)
+        card = Card(Point("R", "o"), Point("W", "*"), False)
     card.set_x_y(x, y)
     return card
 
