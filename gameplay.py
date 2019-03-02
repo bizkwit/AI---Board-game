@@ -1,6 +1,6 @@
 import board as board_m
 import card as card_m
-
+import gameTree as gameTree_m
 
 class Game:
     """ Stores all the date related to the game"""
@@ -11,14 +11,19 @@ class Game:
         self.moves_max = 60
         self.moves_left = 60
 
-        self.game_mode_AI = False
+        self.is_AI_mode = False
+        self.is_AI_player1 = None
+        self.is_AI_move_success = None
+        self.is_minimax_trace_required = None
 
-        self.is_player1_color_option = None
-        self.is_current_player1 = True
-        self.player1_name = "Player1"
-        self.player2_name = "Player2"
         self.is_file_input = False
         self.winner_found = False
+
+        self.is_current_player1 = True
+
+        self.is_player1_color_option = None
+        self.player1_name = "Player1"
+        self.player2_name = "Player2"
 
 
 letterConversion = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7}
@@ -109,8 +114,7 @@ def place_card_from_input():
             x1 = input_list[2]
             y1 = input_list[3] - 1
             card = card_m.get_card(input_list[1], x1, y1)
-            if board.validate_move(card):
-                is_valid_move = True
+            is_valid_move = board.validate_move(card)
         else:  # this is a recycling move
             x1 = input_list[0]
             y1 = input_list[1] - 1
@@ -139,6 +143,17 @@ def place_card_from_input():
             if game.cards_count > 0:
                 game.cards_count -= 1
 
+def place_card_from_AI():
+    is_valid_move = False
+    card, placed_card = gameTree_m.GameTree.generate_card_move(game)
+    if game.cards_count != 0:  # if true, it is a regular move
+        is_valid_move = board.validate_move(card)
+    else:
+        is_valid_move = board.validate_recycling_move(placed_card, card)
+    if is_valid_move:
+        board.place_card(card)
+    return is_valid_move
+
 
 play_again = True
 print("Welcome to this awesome game")
@@ -147,21 +162,28 @@ while play_again:
 
     game = Game()
     board = board_m.Board(12, 8)
-    game.is_file_input = get_yes_no_input("Read moves from file?")
 
-    if game.is_file_input:
-        read_file = open("input.txt", "r")
-        file_input_list = read_file.readlines()
-        read_file.close()
+    game.is_AI_mode = get_yes_no_input("Do you want to challenge the AI?")
+    if game.is_AI_mode:
+        game.is_minimax_trace_required = get_yes_no_input("Do you want to print the Mini-Max Trace?")
+        game.is_AI_player1 = not get_yes_no_input("Do you want to play first?")
+        if game.is_AI_player1:
+            game.player1_name = "AI"
+        else:
+            game.player2_name = "AI"
+    else:
+        game.is_file_input = get_yes_no_input("Read moves from file?")
+        if game.is_file_input:
+            read_file = open("input.txt", "r")
+            file_input_list = read_file.readlines()
+            read_file.close()
 
-    game.player1_name = input("Player1, tell me your name: ")
+    # game.player1_name = input("Player1, tell me your name: ")
 
     print("Ok " + game.player1_name + ", you have two options:")
     print("\t1: to play COLOURS\n\t2: to play DOTS")
 
     game.is_player1_color_option = input("Tell me you choice: ")
-
-    # is_AI_play = get_yes_no_input("Do you want to challenge the AI?")
 
     while game.is_player1_color_option != '1' and game.is_player1_color_option != '2':
         game.is_player1_color_option = input("Your choice is not valid, try again: ")
@@ -171,7 +193,7 @@ while play_again:
     else:
         game.is_player1_color_option = False
 
-    game.player2_name = input("Player2, tell me your name: ")
+    # game.player2_name = input("Player2, tell me your name: ")
     if game.is_player1_color_option:
         print(game.player2_name + ", you have no choice but to play DOTS")
     else:
@@ -189,13 +211,32 @@ while play_again:
               + "\t Cards left: " + str(game.cards_count))
         if game.is_current_player1:
             print(game.player1_name + "'s turn: ", end='')
+            if game.is_AI_mode and game.is_AI_player1:
+                game.is_AI_move_success = place_card_from_AI()
+            else:
+                place_card_from_input()
         else:
             print(game.player2_name + "'s turn: ", end='')
+            if game.is_AI_mode and not game.is_AI_player1:
+                game.is_AI_move_success = place_card_from_AI()
+            else:
+                place_card_from_input()
 
-        place_card_from_input()
         board.print_board()
         card_m.print_cards()
-        winner = board.verify_winning_state()
+        if game.is_AI_move_success is not None and not game.is_AI_move_success:
+            if game.is_AI_player1:
+                if game.is_player1_color_option:
+                    winner = board_m.Winner.DOTS
+                else:
+                    winner = board_m.Winner.COLORS
+            else:
+                if game.is_player1_color_option:
+                    winner = board_m.Winner.COLORS
+                else:
+                    winner = board_m.Winner.DOTS
+        else:
+            winner = board.verify_winning_state()
 
         if winner == board_m.Winner.NONE:
             game.is_current_player1 = not game.is_current_player1
