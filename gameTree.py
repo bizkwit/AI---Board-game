@@ -63,15 +63,29 @@ class GameTree:
 
         for i in range(1, 9):
             for j in range(0, 9):
+                skipper = False
                 for k in range(0, 13):
+                    if skipper:
+                        continue
                     card = card_m.get_card(i, j, k)
-                    current_board = board_m.Board(12, 8)
                     current_board = copy.deepcopy(parent_node.board_state)
                     if current_board.validate_move(card):
                         current_board.place_card(card)
                         new_state = State()
                         new_state.create_state(1, 0, parent_node, current_board)
                         parent_node.add_child(new_state)
+                        skipper = False
+                    else:
+                        skipper = True
+
+    def print_nodes_from_parent(self, parent_node):
+        print("Parent: ")
+        parent_node.board_state.print_board()
+        i = 1
+        for child in parent_node.children:
+            print("Child: ", i)
+            child.board_state.print_board()
+            i = i + 1                
 
     def create_tree(self):
         if self.root is None:
@@ -81,3 +95,5 @@ class GameTree:
             start.create_state(1, 0, None, board)
             self.update_root(start)
         self.create_states_from_parent(self.root)
+        for child in self.root.children:
+            self.create_states_from_parent(child)
