@@ -1,7 +1,7 @@
 import card as card_m
 import board as board_m
 import copy
-import timeit
+import time
 
 
 class State:
@@ -87,3 +87,18 @@ class GameTree:
         self.create_states_from_parent(self.root)
         for child in self.root.children:
             self.create_states_from_parent(child)
+
+
+
+
+"""
+GAMETREE RUNTIME + PRINT CHECKER
+"""
+start_time = time.time()
+game = GameTree()
+game.create_tree()
+total_time = time.time() - start_time
+game.print_nodes_from_parent(game.root)
+for child in game.root.children:
+        game.print_nodes_from_parent(child)
+print("--- method execution time: %s seconds ---" %(total_time))
