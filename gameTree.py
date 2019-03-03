@@ -1,7 +1,7 @@
 import card as card_m
 import board as board_m
 import copy
-import time
+import timeit
 
 
 class State:
@@ -15,19 +15,12 @@ class State:
         - children = a list of states as the children states
     """
 
-    def __init__(self):
-        self.player = 0
-        self.value = 0
-        self.parent = None
-        self.children = []
-        self.board_state = board_m.Board(12, 8)
-
-    def create_state(self, current_player, current_value, parent_state, board):
+    def __init__(self, current_player=0, current_value=0, parent_state=None, board=board_m.Board(12, 8)):
         self.player = current_player
         self.value = current_value
         self.parent = parent_state
-        self.board_state = board
         self.children = []
+        self.board_state = board
 
     # inserts a new state into the children list
 
@@ -65,19 +58,15 @@ class GameTree:
             for j in range(0, 9):
                 for k in range(0, 13):
                     card = card_m.get_card(i, j, k)
-                    current_board = board_m.Board(12, 8)
                     current_board = copy.deepcopy(parent_node.board_state)
                     if current_board.validate_move(card):
                         current_board.place_card(card)
-                        new_state = State()
-                        new_state.create_state(1, 0, parent_node, current_board)
+                        new_state = State(1, 0, parent_node, current_board)
                         parent_node.add_child(new_state)
 
     def create_tree(self):
         if self.root is None:
             # creating the root state with empty board
-            board = board_m.Board(12, 8)
-            start = State()
-            start.create_state(1, 0, None, board)
+            start = State(1)
             self.update_root(start)
         self.create_states_from_parent(self.root)

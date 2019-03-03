@@ -1,5 +1,6 @@
 import card as card_m
 from itertools import groupby
+import copy
 from enum import Enum
 
 
@@ -13,10 +14,21 @@ class Winner(Enum):
 class Board:
     """ Class with all the necessary information and methods for the board """
 
-    def __init__(self, num_rows, num_cols):
+    def __init__(self, num_rows, num_cols, board=None):
         self.num_rows = num_rows
         self.num_cols = num_cols
-        self.board = [[card_m.Point("_", "_") for j in range(num_cols)] for i in range(num_rows)]
+        emptyPoint = card_m.Point("_", "_")
+        self.board = [[emptyPoint for j in range(num_cols)] for i in range(num_rows)]
+        if board is not None:
+            for i in range(num_rows):
+                for j in range(num_cols):
+                    if board[i][j].card is not None and self.board[i][j].card is None:
+                        card = copy.deepcopy(board[i][j].card)
+                        self.board[card.p1.y_coord][card.p1.x_coord] = card.p1
+                        self.board[card.p2.y_coord][card.p2.x_coord] = card.p2
+
+    def __deepcopy__(self, memodict={}):
+        return Board(self.num_rows, self.num_cols, self.board)
 
     def print_board(self):
         """ Prints the game board """

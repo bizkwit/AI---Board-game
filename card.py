@@ -1,5 +1,7 @@
 from termcolor import colored
-import colorama
+import copy
+
+
 class Card:
     """ A Card class is represents a card that the player plays with. A card
     has the following proporties:
@@ -16,6 +18,9 @@ class Card:
         self.p1.card = self
         self.p2.card = self
         self.points = [self.p1, self.p2]
+
+    def __deepcopy__(self, memodict={}):
+        return Card(copy.deepcopy(self.p1), copy.deepcopy(self.p2), self.is_horizontal)
 
     def __eq__(self, other):
         is_equal = False
@@ -72,16 +77,19 @@ class Point:
     """
 
     # initializes each point with a color
-    def __init__(self, color, dot):
+    def __init__(self, color, dot, card=None, x=0, y=0):
         if color == '_' or dot == '_':
             self.value = color
         else:
             self.value = color + dot
-        self.card = None
+        self.card = card
         self.color = color
         self.dot = dot
-        self.x_coord = 0
-        self.y_coord = 0
+        self.x_coord = x
+        self.y_coord = y
+
+    def __deepcopy__(self, memodict={}):
+        return Point(self.color, self.dot, self.card, self.x_coord, self.y_coord)
 
     def __eq__(self, other):
         is_equal = False
