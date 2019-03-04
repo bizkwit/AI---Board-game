@@ -102,6 +102,9 @@ class Point:
             is_equal = True
         return is_equal
 
+
+emptyPoint = Point("_", "_")
+
 # returns the card with specific coordinates
 def get_card(state_num, x=0, y=0):
     if 0 <= state_num >= 9:
