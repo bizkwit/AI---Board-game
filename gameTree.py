@@ -1,3 +1,4 @@
+from minimax import e
 import card as card_m
 import board as board_m
 import copy
@@ -77,6 +78,7 @@ class GameTree:
         for child in parent_node.children:
             print("Child: ", i)
             child.board_state.print_board()
+            print("heuristic: " + repr(e(child.board_state)))
             i = i + 1                
 
     def create_tree(self):
