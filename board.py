@@ -17,8 +17,7 @@ class Board:
     def __init__(self, num_rows, num_cols, board=None):
         self.num_rows = num_rows
         self.num_cols = num_cols
-        emptyPoint = card_m.Point("_", "_")
-        self.board = [[emptyPoint for j in range(num_cols)] for i in range(num_rows)]
+        self.board = [[card_m.emptyPoint for j in range(num_cols)] for i in range(num_rows)]
         if board is not None:
             for i in range(num_rows):
                 for j in range(num_cols):
@@ -62,24 +61,19 @@ class Board:
 
         # verifying if it is in our board range
         if 0 <= x1 < self.num_cols and 0 <= y1 < self.num_rows and 0 <= x2 < self.num_cols and 0 <= y2 < self.num_rows:
-
             # verifying if there is already a card in the desired position
             if self.board[y1][x1].value != "_" or self.board[y2][x2].value != "_":
                 is_valid_move = False
             # if card is placed in the first row, we verify ONLY if x1 and x2 are inside the board range
-            elif y1 == 0:
-                if 0 > x1 >= self.board.size:
-                    is_valid_move = False
-                elif y2 == y1 and 0 > x2 >= self.board.size:
+            elif y1 > 0:
+                if card.is_horizontal:
+                    # verifying if there is blank space under the desired placement of the horizontal card
+                    if self.board[y1-1][x1].value == "_" or self.board[y2-1][x2].value == "_":
                         is_valid_move = False
-            elif card.is_horizontal:
-                # verifying if there is blank space under the desired placement of the horizontal card
-                if self.board[y1-1][x1].value == "_" or self.board[y2-1][x2].value == "_":
-                    is_valid_move = False
-            else:
-                # verifying if there is blank space under the desired placement of the vertical card
-                if self.board[y1-1][x1].value == "_":
-                    is_valid_move = False
+                else:
+                    # verifying if there is blank space under the desired placement of the vertical card
+                    if self.board[y1-1][x1].value == "_":
+                        is_valid_move = False
         else:
             is_valid_move = False
         return is_valid_move
