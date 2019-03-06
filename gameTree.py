@@ -56,7 +56,8 @@ class State:
                     if self.board_state.validate_move(card):
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
-                        new_state = State(current_board, 1, 0, self)
+
+                        new_state = State(current_board, 1, e(current_board), self)
                         self.add_child(new_state)
 
 
