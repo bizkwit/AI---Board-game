@@ -1,3 +1,4 @@
+from minimax import e
 import card as card_m
 import board as board_m
 import copy
