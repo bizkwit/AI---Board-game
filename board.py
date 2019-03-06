@@ -14,20 +14,33 @@ class Winner(Enum):
 class Board:
     """ Class with all the necessary information and methods for the board """
 
-    def __init__(self, num_rows, num_cols, board=None):
+    def __init__(self, num_rows, num_cols, points=None, point_counter_rows=None, point_counter_cols=None):
         self.num_rows = num_rows
         self.num_cols = num_cols
-        self.board = [[card_m.emptyPoint for j in range(num_cols)] for i in range(num_rows)]
-        if board is not None:
+        self.points = [[card_m.emptyPoint for j in range(num_cols)] for i in range(num_rows)]
+        self.point_counter_rows, self.point_counter_cols = [], []
+        if point_counter_rows is None:
+            self.point_counter_rows = [0 for i in range(num_rows)]
+        else:
+            for counter in point_counter_rows:
+                self.point_counter_rows.append(counter)
+        if point_counter_rows is None:
+            self.point_counter_cols = [0 for i in range(num_cols)]
+        else:
+            for counter in point_counter_cols:
+                self.point_counter_cols.append(counter)
+
+        if points is not None:
             for i in range(num_rows):
                 for j in range(num_cols):
-                    if board[i][j].card is not None and self.board[i][j].card is None:
-                        card = copy.deepcopy(board[i][j].card)
-                        self.board[card.p1.y_coord][card.p1.x_coord] = card.p1
-                        self.board[card.p2.y_coord][card.p2.x_coord] = card.p2
+                    if points[i][j].card is not None and self.points[i][j].card is None:
+                        card = copy.deepcopy(points[i][j].card)
+                        self.points[card.p1.y_coord][card.p1.x_coord] = card.p1
+                        self.points[card.p2.y_coord][card.p2.x_coord] = card.p2
 
     def __deepcopy__(self, memodict={}):
-        return Board(self.num_rows, self.num_cols, self.board)
+        return Board(self.num_rows, self.num_cols, self.points,
+                     self.point_counter_rows, self.point_counter_cols)
 
     def print_board(self):
         """ Prints the game board """
@@ -36,22 +49,38 @@ class Board:
             y -= 1
             print("\n" + str(row), end='')
             for x in range(self.num_cols):
-                if self.board[y][x].value == "_":
+                if self.points[y][x].card is None:
                     print("\t_", end='')
                 else:
-                    print("\t" + self.board[y][x].value, end='')
+                    print("\t" + self.points[y][x].value, end='')
         print("\n\n\tA\tB\tC\tD\tE\tF\tG\tH")
 
     def place_card(self, card):
         """Places a specific point in the board"""
         x = card.p1.x_coord
         y = card.p1.y_coord
-        self.board[y][x] = card.p1
+        self.points[y][x] = card.p1
+        self.point_counter_cols[x] += 1
+        self.point_counter_rows[y] += 1
         x = card.p2.x_coord
         y = card.p2.y_coord
-        self.board[y][x] = card.p2
+        self.points[y][x] = card.p2
+        self.point_counter_cols[x] += 1
+        self.point_counter_rows[y] += 1
 
-    def validate_move(self, card):
+    def remove_card(self, card):
+        x = card.p1.x_coord
+        y = card.p1.y_coord
+        self.points[y][x] = card_m.emptyPoint
+        self.point_counter_cols[x] -= 1
+        self.point_counter_rows[y] -= 1
+        x = card.p2.x_coord
+        y = card.p2.y_coord
+        self.points[y][x] = card_m.emptyPoint
+        self.point_counter_cols[x] -= 1
+        self.point_counter_rows[y] -= 1
+
+    def validate_move(self, card, place_card=False):
         """ Validate a regular move"""
         is_valid_move = True
         x1 = card.p1.x_coord
@@ -62,51 +91,56 @@ class Board:
         # verifying if it is in our board range
         if 0 <= x1 < self.num_cols and 0 <= y1 < self.num_rows and 0 <= x2 < self.num_cols and 0 <= y2 < self.num_rows:
             # verifying if there is already a card in the desired position
-            if self.board[y1][x1].value != "_" or self.board[y2][x2].value != "_":
+            if self.points[y1][x1].card is not None or self.points[y2][x2].card is not None:
                 is_valid_move = False
             # if card is placed in the first row, we verify ONLY if x1 and x2 are inside the board range
             elif y1 > 0:
                 if card.is_horizontal:
                     # verifying if there is blank space under the desired placement of the horizontal card
-                    if self.board[y1-1][x1].value == "_" or self.board[y2-1][x2].value == "_":
+                    if self.points[y1 - 1][x1].card is None or self.points[y2 - 1][x2].card is None:
                         is_valid_move = False
                 else:
                     # verifying if there is blank space under the desired placement of the vertical card
-                    if self.board[y1-1][x1].value == "_":
+                    if self.points[y1 - 1][x1].card is None:
                         is_valid_move = False
         else:
             is_valid_move = False
+        if is_valid_move and place_card:
+            self.place_card(card)
         return is_valid_move
 
-    def validate_recycling_move(self, card, new_card):
+    def place_recycling_move(self, placed_card, new_card):
         """ Validate a recycling move"""
-        if card is not None and new_card is not None\
-                and card != new_card:
+        if placed_card is not None and new_card is not None \
+                and placed_card != new_card:
             is_valid_remove = True
-            x1 = card.p1.x_coord
-            y1 = card.p1.y_coord
-            x2 = card.p2.x_coord
-            y2 = card.p2.y_coord
+            x1 = placed_card.p1.x_coord
+            y1 = placed_card.p1.y_coord
+            x2 = placed_card.p2.x_coord
+            y2 = placed_card.p2.y_coord
 
             # verifying if the card is not in the last row
             if y2 < self.num_rows - 1:
-                if card.is_horizontal:
+                if placed_card.is_horizontal:
                     # verify if there is any card above for horizontally placed card
-                    if self.board[y2+1][x1].value != "_":
+                    if self.points[y2 + 1][x1].card is not card_m.emptyPoint.card:
                         is_valid_remove = False
                 else:
                     # verify if there is any card above
-                    if y2 < self.num_rows-1 and self.board[y2+1][x2].value != "_":
+                    if y2 < self.num_rows - 1 and self.points[y2 + 1][x2].card is not card_m.emptyPoint.card:
                         is_valid_remove = False
 
             if is_valid_remove:
-                self.board[y1][x1] = card_m.Point("_", "_")
-                self.board[y2][x2] = card_m.Point("_", "_")
+                self.points[y1][x1] = card_m.emptyPoint
+                self.points[y2][x2] = card_m.emptyPoint
                 is_valid_move = self.validate_move(new_card)
                 # restore the points if the move cannot be made
                 if not is_valid_move:
-                    self.board[y1][x1] = card.p1
-                    self.board[y2][x2] = card.p2
+                    self.points[y1][x1] = placed_card.p1
+                    self.points[y2][x2] = placed_card.p2
+                else:
+                    self.remove_card(placed_card)
+                    self.place_card(new_card)
             else:
                 is_valid_move = False
         else:
@@ -117,8 +151,12 @@ class Board:
         occurrence_winner = Winner.NONE
         rows_colors, rows_dots, cols_colors, cols_dots, \
         diag_front_colors, diag_front_dots, diag_back_colors, diag_back_dots = [], [], [], [], [], [], [], []
-
-        for i in range(self.num_rows):
+        max_points_height = self.num_rows
+        for i in range(max_points_height):
+            # if there are no points on the row, we stop
+            if self.point_counter_rows[i] == 0:
+                max_points_height = i
+                break
             rows_colors.append('')
             rows_dots.append('')
 
@@ -126,7 +164,7 @@ class Board:
             cols_colors.append('')
             cols_dots.append('')
 
-        for i in range(self.num_rows + self.num_cols - 1):
+        for i in range(max_points_height + self.num_cols - 1):
             diag_front_colors.append('')
             diag_front_dots.append('')
 
@@ -134,58 +172,60 @@ class Board:
             diag_back_colors.append('')
             diag_back_dots.append('')
 
-        min_diag = -self.num_rows + 1
+        min_diag = -max_points_height + 1
 
-        for y in range(self.num_rows):
+        for y in range(max_points_height):
+            # if there are no points on the row, we stop
+            if self.point_counter_rows[y] == 0:
+                break
             for x in range(self.num_cols):
-                rows_colors[y] += self.board[y][x].color
-                rows_dots[y] += self.board[y][x].dot
-                cols_colors[x] += self.board[y][x].color
-                cols_dots[x] += self.board[y][x].dot
-                diag_front_colors[x + y] += self.board[y][x].color
-                diag_front_dots[x + y] += self.board[y][x].dot
-                diag_back_colors[-min_diag + x - y] += self.board[y][x].color
-                diag_back_dots[-min_diag + x - y] += self.board[y][x].dot
+                rows_colors[y] += self.points[y][x].color
+                rows_dots[y] += self.points[y][x].dot
+                cols_colors[x] += self.points[y][x].color
+                cols_dots[x] += self.points[y][x].dot
+                diag_front_colors[x + y] += self.points[y][x].color
+                diag_front_dots[x + y] += self.points[y][x].dot
+                diag_back_colors[-min_diag + x - y] += self.points[y][x].color
+                diag_back_dots[-min_diag + x - y] += self.points[y][x].dot
 
         arrays_of_colors_and_dots = [rows_colors, rows_dots, cols_colors, cols_dots, diag_front_colors,
-                                    diag_front_dots, diag_back_colors, diag_back_dots]
+                                     diag_front_dots, diag_back_colors, diag_back_dots]
         # running this outside the loop to be able to pass the True for is_row attribute
         occurrence_winner = verify_occurences(arrays_of_colors_and_dots[0],
-                                              arrays_of_colors_and_dots[1], occurrence_winner, True)
+                                              arrays_of_colors_and_dots[1], occurrence_winner)
         for i in range(2, len(arrays_of_colors_and_dots), 2):
             if occurrence_winner == Winner.TIE:
                 return occurrence_winner
             occurrence_winner = verify_occurences(arrays_of_colors_and_dots[i],
-                                                  arrays_of_colors_and_dots[i+1], occurrence_winner)
+                                                  arrays_of_colors_and_dots[i + 1], occurrence_winner)
         return occurrence_winner
 
 
-def verify_occurences(colors_list, dots_list, occurrence_winner, is_rows=False):
-        for i in range(len(colors_list)):
-            occurrences_colors = [(k, len(list(g))) for k, g in groupby(colors_list[i])]
-            occurrences_dots = [(k, len(list(g))) for k, g in groupby(dots_list[i])]
-            # verifying if any consecutive colors
-            for arrays in occurrences_colors:
-                if arrays[0] != "_" and arrays[1] >= 4:
-                    if occurrence_winner == Winner.DOTS:
-                        occurrence_winner = Winner.TIE
-                        # if we already have a tie, we stop verifying any further
-                        return occurrence_winner
-                    else:
-                        occurrence_winner = Winner.COLORS
+def verify_occurences(colors_list, dots_list, occurrence_winner):
+    for i in range(len(colors_list)):
+        occurrences_colors = [(k, len(list(g))) for k, g in groupby(colors_list[i])]
+        occurrences_dots = [(k, len(list(g))) for k, g in groupby(dots_list[i])]
+        # verifying if any consecutive colors
+        for occurrence in occurrences_colors:
+            if occurrence[0] != card_m.emptyPoint.value and occurrence[1] >= 4:
+                if occurrence_winner == Winner.DOTS:
+                    occurrence_winner = Winner.TIE
+                    # if we already have a tie, we stop verifying any further
                     break
-            # verifying if any consecutive dots
-            for arrays in occurrences_dots:
-                if arrays[0] != "_" and arrays[1] >= 4:
-                    if occurrence_winner == Winner.COLORS:
-                        occurrence_winner = Winner.TIE
-                        # if we already have a tie, we stop verifying any further
-                        return occurrence_winner
-                    else:
-                        occurrence_winner = Winner.DOTS
+                else:
+                    occurrence_winner = Winner.COLORS
+                break  # we found a winner so we stop searching for it
+        # verifying if any consecutive dots
+        for occurrence in occurrences_dots:
+            if occurrence[0] != card_m.emptyPoint.value and occurrence[1] >= 4:
+                if occurrence_winner == Winner.COLORS:
+                    occurrence_winner = Winner.TIE
+                    # if we already have a tie, we stop verifying any further
                     break
-            # if we already have a tie or if there are no more card on a row, we stop verifying any further
-            if occurrence_winner == Winner.TIE or \
-                    is_rows and len(occurrences_colors) == 1 and occurrences_colors[0][0] == "_":
-                break
-        return occurrence_winner
+                else:
+                    occurrence_winner = Winner.DOTS
+                break  # we found a winner so we stop searching for it
+        # if we already have a tie, we stop verifying any further
+        if occurrence_winner == Winner.TIE:
+            break
+    return occurrence_winner

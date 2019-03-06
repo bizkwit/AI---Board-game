@@ -1,9 +1,11 @@
 import board as board_m
 import card as card_m
 import gameTree as gameTree_m
+import time
+
 
 class Game:
-    """ Stores all the date related to the game"""
+    """ Stores all the date related to the game """
 
     # a constructor to initialize the game
     def __init__(self):
@@ -114,44 +116,42 @@ def place_card_from_input():
             x1 = input_list[2]
             y1 = input_list[3] - 1
             card = card_m.get_card(input_list[1], x1, y1)
-            is_valid_move = board.validate_move(card)
+            is_valid_move = board.validate_move(card, True)
         else:  # this is a recycling move
             x1 = input_list[0]
             y1 = input_list[1] - 1
             x2 = input_list[2]
             y2 = input_list[3] - 1
             # verifying if the points belong to the same card
-            if board.board[y1][x1].card == board.board[y2][x2].card:
-                placed_card = board.board[y1][x1].card
+            if board.points[y1][x1].card == board.points[y2][x2].card:
+                placed_card = board.points[y1][x1].card
                 new_x1 = input_list[5]
                 new_y1 = input_list[6] - 1
                 card = card_m.get_card(input_list[4], new_x1, new_y1)
                 if placed_card == game.last_card_played:
                     print(" *** You can't recycle the last-played card ***")
-                elif board.validate_recycling_move(placed_card, card):
-                    is_valid_move = True
                 elif placed_card == card:
                     print(" *** You must change card's rotation, position or both ***")
+                else:
+                    is_valid_move = board.place_recycling_move(placed_card, card)
         if not is_valid_move:
             if game.is_file_input:
                 game.is_file_input = False
                 print("Next moves will be done in manual mode.")
             input_list = get_valid_input("Input not valid, try again: ")
         else:
-            board.place_card(card)
             game.last_card_played = card
             if game.cards_count > 0:
                 game.cards_count -= 1
+
 
 def place_card_from_AI():
     is_valid_move = False
     card, placed_card = gameTree_m.GameTree.generate_card_move(game)
     if game.cards_count != 0:  # if true, it is a regular move
-        is_valid_move = board.validate_move(card)
+        is_valid_move = board.validate_move(card, True)
     else:
-        is_valid_move = board.validate_recycling_move(placed_card, card)
-    if is_valid_move:
-        board.place_card(card)
+        is_valid_move = board.place_recycling_move(placed_card, card)
     return is_valid_move
 
 
@@ -162,7 +162,7 @@ while play_again:
 
     game = Game()
     board = board_m.Board(12, 8)
-
+    game_tree = gameTree_m.GameTree(gameTree_m.State(board, 0))
     game.is_AI_mode = get_yes_no_input("Do you want to challenge the AI?")
     if game.is_AI_mode:
         game.is_minimax_trace_required = get_yes_no_input("Do you want to print the Mini-Max Trace?")
@@ -209,6 +209,8 @@ while play_again:
     while not game.winner_found and game.moves_left >= 0:
         print("\nTurn: " + str(game.moves_max - game.moves_left + 1) + "/" + str(game.moves_max)
               + "\t Cards left: " + str(game.cards_count))
+        if game.moves_max - game.moves_left + 1 == 32:
+            1 == 1
         if game.is_current_player1:
             print(game.player1_name + "'s turn: ", end='')
             if game.is_AI_mode and game.is_AI_player1:
@@ -221,6 +223,12 @@ while play_again:
                 game.is_AI_move_success = place_card_from_AI()
             else:
                 place_card_from_input()
+
+        start_time = time.time()
+        game_tree.create_tree()
+        total_time = time.time() - start_time
+        game_tree.print_tree()
+        print("--- method execution time: %s seconds ---" % (total_time))
 
         board.print_board()
         card_m.print_cards()

@@ -17,7 +17,6 @@ class Card:
         self.p2 = Point2
         self.p1.card = self
         self.p2.card = self
-        self.points = [self.p1, self.p2]
 
     def __deepcopy__(self, memodict={}):
         return Card(copy.deepcopy(self.p1), copy.deepcopy(self.p2), self.is_horizontal)
@@ -26,9 +25,9 @@ class Card:
         is_equal = False
         if self is other:
             is_equal = True
-        elif type(self) == type(other)\
-                and self.p1 == other.p1\
-                and self.p2 == other.p2\
+        elif type(self) == type(other) \
+                and self.p1 == other.p1 \
+                and self.p2 == other.p2 \
                 and self.is_horizontal == other.is_horizontal:
             is_equal = True
         return is_equal
@@ -95,15 +94,16 @@ class Point:
         is_equal = False
         if self is other:
             is_equal = True
-        elif type(self) == type(other)\
-                and self.y_coord == other.y_coord\
-                and self.x_coord == other.x_coord\
+        elif type(self) == type(other) \
+                and self.y_coord == other.y_coord \
+                and self.x_coord == other.x_coord \
                 and self.value == other.value:
             is_equal = True
         return is_equal
 
 
 emptyPoint = Point("_", "_")
+
 
 # returns the card with specific coordinates
 def get_card(state_num, x=0, y=0):
@@ -128,28 +128,31 @@ def get_card(state_num, x=0, y=0):
     card.set_x_y(x, y)
     return card
 
-#prints all the cards for the player to see
-def print_cards():
-    #colorama.init(autoreset=True)
-    #RF = colored("*", "grey","on_red")
-    #RE = colored("o", "grey","on_red")
-    #WF = colored("*", "grey","on_white")
-    #WE = colored("o","grey","on_white")
 
-    #print("Here are the card configurations for you to choose:")
-    #print("  ", RF,"  ",WE,"  ",RE,"  ",WF)
-    #print(RF+WE, WE,WE+RF,RF,RE+WF,WF,WF+RE,RE)
-    #print("1 ","2","3 ","4","5 ","6","7 ","8")
+# prints all the cards for the player to see
+def print_cards():
+    # colorama.init(autoreset=True)
+    # RF = colored("*", "grey","on_red")
+    # RE = colored("o", "grey","on_red")
+    # WF = colored("*", "grey","on_white")
+    # WE = colored("o","grey","on_white")
+
+    # print("Here are the card configurations for you to choose:")
+    # print("  ", RF,"  ",WE,"  ",RE,"  ",WF)
+    # print(RF+WE, WE,WE+RF,RF,RE+WF,WF,WF+RE,RE)
+    # print("1 ","2","3 ","4","5 ","6","7 ","8")
 
     print()
     print("Here are the card configurations for you to choose:")
-    print("       ", "|R*|","       ", "|Wo|","       ", "|Ro|","       ", "|W*|")
-    print("|R* Wo|", "|Wo|","|Wo R*|", "|R*|","|Ro W*|", "|W*|","|W* Ro|", "|Ro|")
-    print("   1   ", " 2  ","   3   ", " 4  ","   5   ", " 6  ","   7   ", " 8  ")
+    print("       ", "|R*|", "       ", "|Wo|", "       ", "|Ro|", "       ", "|W*|")
+    print("|R* Wo|", "|Wo|", "|Wo R*|", "|R*|", "|Ro W*|", "|W*|", "|W* Ro|", "|Ro|")
+    print("   1   ", " 2  ", "   3   ", " 4  ", "   5   ", " 6  ", "   7   ", " 8  ")
+
+
 '''||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
    |||              print with colors                               |||
    ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-   
+
     print("Here are the card configurations for you to choose:")
     print("  ", RF,"  ",WE,"  ",RE,"  ",WF)
     print(RF+WE, WE,WE+RF,RF,RE+WF,WF,WF+RE,RE)
