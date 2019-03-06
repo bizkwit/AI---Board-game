@@ -4,10 +4,10 @@ def e(board):
         for col in range(board.num_cols):
             if board.matrix[row][col].value == "Wo":
                 result += row * 10 + col + 1
-            if board.matrix[row][col].value == "W*":
+            elif board.matrix[row][col].value == "W*":
                 result += 3 * (row * 10 + col + 1)
-            if board.matrix[row][col].value == "R*":
+            elif board.matrix[row][col].value == "R*":
                 result -= 2 * (row * 10 + col + 1)
-            if board.matrix[row][col].value == "Ro":
+            elif board.matrix[row][col].value == "Ro":
                 result -= 1.5 * (row * 10 + col + 1)
     return result
