@@ -56,7 +56,7 @@ class State:
                     if self.board_state.validate_move(card):
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
-                        new_state = State(current_board, 1, 0, self)
+                        new_state = State(current_board, 1, e(current_board), self)
                         self.add_child(new_state)
 
 
@@ -92,7 +92,7 @@ class GameTree:
             child.board_state.print_board()
             child_number = 1
             for child1 in child.children:
-                print("Child: ", child_number, " Parent: ", parent_number)
+                print(" Parent: ", parent_number, "Child: ", child_number, "Value: ", child.value)
                 child1.board_state.print_board()
                 child_number = child_number + 1
         print("Total Nodes: ", child_number * parent_number + 1)
