@@ -123,8 +123,8 @@ def place_card_from_input():
             x2 = input_list[2]
             y2 = input_list[3] - 1
             # verifying if the points belong to the same card
-            if board.points[y1][x1].card == board.points[y2][x2].card:
-                placed_card = board.points[y1][x1].card
+            if board.matrix[y1][x1].card == board.matrix[y2][x2].card:
+                placed_card = board.matrix[y1][x1].card
                 new_x1 = input_list[5]
                 new_y1 = input_list[6] - 1
                 card = card_m.get_card(input_list[4], new_x1, new_y1)

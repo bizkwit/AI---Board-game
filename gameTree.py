@@ -88,11 +88,11 @@ class GameTree:
         self.root.board_state.print_board()
         for child in self.root.children:
             parent_number += 1
-            print("Parent: ", parent_number)
+            print("Parent: ", parent_number, "Value: ", child.value)
             child.board_state.print_board()
             child_number = 1
             for child1 in child.children:
-                print(" Parent: ", parent_number, "Child: ", child_number, "Value: ", child.value)
+                print(" Parent: ", parent_number, "Child: ", child_number, "Value: ", child1.value)
                 child1.board_state.print_board()
                 child_number = child_number + 1
         print("Total Nodes: ", child_number * parent_number + 1)

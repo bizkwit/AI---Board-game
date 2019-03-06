@@ -14,10 +14,10 @@ class Winner(Enum):
 class Board:
     """ Class with all the necessary information and methods for the board """
 
-    def __init__(self, num_rows, num_cols, points=None, point_counter_rows=None, point_counter_cols=None):
+    def __init__(self, num_rows, num_cols, matrix=None, point_counter_rows=None, point_counter_cols=None):
         self.num_rows = num_rows
         self.num_cols = num_cols
-        self.points = [[card_m.emptyPoint for j in range(num_cols)] for i in range(num_rows)]
+        self.matrix = [[card_m.emptyPoint for j in range(num_cols)] for i in range(num_rows)]
         self.point_counter_rows, self.point_counter_cols = [], []
         if point_counter_rows is None:
             self.point_counter_rows = [0 for i in range(num_rows)]
@@ -30,16 +30,16 @@ class Board:
             for counter in point_counter_cols:
                 self.point_counter_cols.append(counter)
 
-        if points is not None:
+        if matrix is not None:
             for i in range(num_rows):
                 for j in range(num_cols):
-                    if points[i][j].card is not None and self.points[i][j].card is None:
-                        card = copy.deepcopy(points[i][j].card)
-                        self.points[card.p1.y_coord][card.p1.x_coord] = card.p1
-                        self.points[card.p2.y_coord][card.p2.x_coord] = card.p2
+                    if matrix[i][j].card is not None and self.matrix[i][j].card is None:
+                        card = copy.deepcopy(matrix[i][j].card)
+                        self.matrix[card.p1.y_coord][card.p1.x_coord] = card.p1
+                        self.matrix[card.p2.y_coord][card.p2.x_coord] = card.p2
 
     def __deepcopy__(self, memodict={}):
-        return Board(self.num_rows, self.num_cols, self.points,
+        return Board(self.num_rows, self.num_cols, self.matrix,
                      self.point_counter_rows, self.point_counter_cols)
 
     def print_board(self):
@@ -49,34 +49,34 @@ class Board:
             y -= 1
             print("\n" + str(row), end='')
             for x in range(self.num_cols):
-                if self.points[y][x].card is None:
+                if self.matrix[y][x].card is None:
                     print("\t_", end='')
                 else:
-                    print("\t" + self.points[y][x].value, end='')
+                    print("\t" + self.matrix[y][x].value, end='')
         print("\n\n\tA\tB\tC\tD\tE\tF\tG\tH")
 
     def place_card(self, card):
         """Places a specific point in the board"""
         x = card.p1.x_coord
         y = card.p1.y_coord
-        self.points[y][x] = card.p1
+        self.matrix[y][x] = card.p1
         self.point_counter_cols[x] += 1
         self.point_counter_rows[y] += 1
         x = card.p2.x_coord
         y = card.p2.y_coord
-        self.points[y][x] = card.p2
+        self.matrix[y][x] = card.p2
         self.point_counter_cols[x] += 1
         self.point_counter_rows[y] += 1
 
     def remove_card(self, card):
         x = card.p1.x_coord
         y = card.p1.y_coord
-        self.points[y][x] = card_m.emptyPoint
+        self.matrix[y][x] = card_m.emptyPoint
         self.point_counter_cols[x] -= 1
         self.point_counter_rows[y] -= 1
         x = card.p2.x_coord
         y = card.p2.y_coord
-        self.points[y][x] = card_m.emptyPoint
+        self.matrix[y][x] = card_m.emptyPoint
         self.point_counter_cols[x] -= 1
         self.point_counter_rows[y] -= 1
 
@@ -91,17 +91,17 @@ class Board:
         # verifying if it is in our board range
         if 0 <= x1 < self.num_cols and 0 <= y1 < self.num_rows and 0 <= x2 < self.num_cols and 0 <= y2 < self.num_rows:
             # verifying if there is already a card in the desired position
-            if self.points[y1][x1].card is not None or self.points[y2][x2].card is not None:
+            if self.matrix[y1][x1].card is not None or self.matrix[y2][x2].card is not None:
                 is_valid_move = False
             # if card is placed in the first row, we verify ONLY if x1 and x2 are inside the board range
             elif y1 > 0:
                 if card.is_horizontal:
                     # verifying if there is blank space under the desired placement of the horizontal card
-                    if self.points[y1 - 1][x1].card is None or self.points[y2 - 1][x2].card is None:
+                    if self.matrix[y1 - 1][x1].card is None or self.matrix[y2 - 1][x2].card is None:
                         is_valid_move = False
                 else:
                     # verifying if there is blank space under the desired placement of the vertical card
-                    if self.points[y1 - 1][x1].card is None:
+                    if self.matrix[y1 - 1][x1].card is None:
                         is_valid_move = False
         else:
             is_valid_move = False
@@ -123,21 +123,21 @@ class Board:
             if y2 < self.num_rows - 1:
                 if placed_card.is_horizontal:
                     # verify if there is any card above for horizontally placed card
-                    if self.points[y2 + 1][x1].card is not card_m.emptyPoint.card:
+                    if self.matrix[y2 + 1][x1].card is not card_m.emptyPoint.card:
                         is_valid_remove = False
                 else:
                     # verify if there is any card above
-                    if y2 < self.num_rows - 1 and self.points[y2 + 1][x2].card is not card_m.emptyPoint.card:
+                    if y2 < self.num_rows - 1 and self.matrix[y2 + 1][x2].card is not card_m.emptyPoint.card:
                         is_valid_remove = False
 
             if is_valid_remove:
-                self.points[y1][x1] = card_m.emptyPoint
-                self.points[y2][x2] = card_m.emptyPoint
+                self.matrix[y1][x1] = card_m.emptyPoint
+                self.matrix[y2][x2] = card_m.emptyPoint
                 is_valid_move = self.validate_move(new_card)
                 # restore the points if the move cannot be made
                 if not is_valid_move:
-                    self.points[y1][x1] = placed_card.p1
-                    self.points[y2][x2] = placed_card.p2
+                    self.matrix[y1][x1] = placed_card.p1
+                    self.matrix[y2][x2] = placed_card.p2
                 else:
                     self.remove_card(placed_card)
                     self.place_card(new_card)
@@ -179,14 +179,14 @@ class Board:
             if self.point_counter_rows[y] == 0:
                 break
             for x in range(self.num_cols):
-                rows_colors[y] += self.points[y][x].color
-                rows_dots[y] += self.points[y][x].dot
-                cols_colors[x] += self.points[y][x].color
-                cols_dots[x] += self.points[y][x].dot
-                diag_front_colors[x + y] += self.points[y][x].color
-                diag_front_dots[x + y] += self.points[y][x].dot
-                diag_back_colors[-min_diag + x - y] += self.points[y][x].color
-                diag_back_dots[-min_diag + x - y] += self.points[y][x].dot
+                rows_colors[y] += self.matrix[y][x].color
+                rows_dots[y] += self.matrix[y][x].dot
+                cols_colors[x] += self.matrix[y][x].color
+                cols_dots[x] += self.matrix[y][x].dot
+                diag_front_colors[x + y] += self.matrix[y][x].color
+                diag_front_dots[x + y] += self.matrix[y][x].dot
+                diag_back_colors[-min_diag + x - y] += self.matrix[y][x].color
+                diag_back_dots[-min_diag + x - y] += self.matrix[y][x].dot
 
         arrays_of_colors_and_dots = [rows_colors, rows_dots, cols_colors, cols_dots, diag_front_colors,
                                      diag_front_dots, diag_back_colors, diag_back_dots]
