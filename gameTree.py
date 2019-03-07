@@ -1,7 +1,7 @@
 from minimax import e
 import card as card_m
 import board as board_m
-import gameplay as gameplay_m
+
 import copy
 import time
 
