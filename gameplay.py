@@ -10,6 +10,7 @@ class Game:
     # a constructor to initialize the game
     def __init__(self):
         self.cards_count = 24
+        self.last_card_played = None
         self.moves_max = 60
         self.moves_left = 60
 
