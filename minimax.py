@@ -36,7 +36,7 @@ class Minimax:
                         lowest_score = child.value
                         best_move = [lowest_score]
             self.bot(child, depth-1, -player)
-            return best_move, child.board_state.print_board()
+            return best_move, child.board_state.print_board(), child.value
 
     @staticmethod
     def e(board):
