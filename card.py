@@ -20,7 +20,7 @@ class Card:
         self.cofig_num = card_num
 
     def __deepcopy__(self, memodict={}):
-        return Card(copy.deepcopy(self.p1), copy.deepcopy(self.p2), self.is_horizontal)
+        return Card(copy.deepcopy(self.p1), copy.deepcopy(self.p2), self.is_horizontal, copy.deepcopy(self.cofig_num))
 
     def __eq__(self, other):
         is_equal = False
