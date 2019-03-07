@@ -205,7 +205,8 @@ while play_again:
 
     board.print_board()
     card_m.print_cards()
-
+    game_tree.create_tree(game.is_current_player1)
+    game_tree.print_tree()
     while not game.winner_found and game.moves_left >= 0:
         print("\nTurn: " + str(game.moves_max - game.moves_left + 1) + "/" + str(game.moves_max)
               + "\t Cards left: " + str(game.cards_count))
@@ -225,9 +226,10 @@ while play_again:
                 place_card_from_input()
 
         start_time = time.time()
-        game_tree.create_tree()
+        game_tree.get_best_state(game.is_current_player1)
         total_time = time.time() - start_time
         game_tree.print_tree()
+        # board = game_tree.root.board_state
         print("--- method execution time: %s seconds ---" % (total_time))
 
         board.print_board()

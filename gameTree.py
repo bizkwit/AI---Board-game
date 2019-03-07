@@ -36,8 +36,7 @@ class State:
     def set_state_value(self, new_value):
         self.value = new_value
 
-    def generate_children(self):
-        self.children = []  # removing the old children
+    def generate_children(self, is_last_depth=False, is_max=True):
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
@@ -56,8 +55,18 @@ class State:
                     if self.board_state.validate_move(card):
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
-                        new_state = State(current_board, 1, e(current_board), self)
+                        if is_last_depth:
+                            value = e(current_board)
+                        else:
+                            value = 0
+                        new_state = State(current_board, 1, value, self)
                         self.add_child(new_state)
+        if is_last_depth:
+            if is_max:
+                self.value = max(child.value for child in self.children)
+            else:
+                self.value = min(child.value for child in self.children)
+            self.children = []
 
 
 
@@ -86,10 +95,6 @@ class State:
                         current_board.place_card(card)
                         new_state = State(current_board, 1, e(current_board), self)
                         self.add_child(new_state)
-        
-
-    
-    
 
 
 class GameTree:
@@ -110,24 +115,34 @@ class GameTree:
     def update_root(self, current_state):
         self.root = current_state
 
-    def create_tree(self):
+    def get_best_state(self, is_max):
         self.root.generate_children()
         for child in self.root.children:
-            child.generate_children()
+            child.generate_children(True, not is_max)
+        if is_max:
+            best_state = max(self.root.children, key=lambda state: state.value)
+        else:
+            best_state = min(self.root.children, key=lambda state: state.value)
+        self.update_root(best_state)
 
     def print_tree(self):
+        number_of_nodes = 1
         parent_number = 0
         self.root.board_state.print_board()
         for child in self.root.children:
+            number_of_nodes += 1
             parent_number += 1
             print("Parent: ", parent_number, "Value: ", child.value)
             child.board_state.print_board()
             child_number = 1
             for child1 in child.children:
+                number_of_nodes += 1
                 print(" Parent: ", parent_number, "Child: ", child_number, "Value: ", child1.value)
                 child1.board_state.print_board()
                 child_number = child_number + 1
-        print("Total Nodes: ", child_number * parent_number + 1)
+        print("Root Value: ", self.root.value)
+        print("Root Board: ", self.root.board_state.print_board())
+        print("Total Nodes: ", number_of_nodes)
 
 
 """
