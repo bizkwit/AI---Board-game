@@ -1,4 +1,4 @@
-from termcolor import colored
+
 import copy
 
 
@@ -11,15 +11,16 @@ class Card:
     """
 
     # a constructor to initialize the card
-    def __init__(self, Point1, Point2, position):
+    def __init__(self, Point1, Point2, position, card_num):
         self.is_horizontal = position
         self.p1 = Point1
         self.p2 = Point2
         self.p1.card = self
         self.p2.card = self
+        self.cofig_num = card_num
 
     def __deepcopy__(self, memodict={}):
-        return Card(copy.deepcopy(self.p1), copy.deepcopy(self.p2), self.is_horizontal)
+        return Card(copy.deepcopy(self.p1), copy.deepcopy(self.p2), self.is_horizontal, copy.deepcopy(self.cofig_num))
 
     def __eq__(self, other):
         is_equal = False
@@ -110,21 +111,21 @@ def get_card(state_num, x=0, y=0):
     if 0 <= state_num >= 9:
         return
     elif state_num == 1:
-        card = Card(Point("R", "*"), Point("W", "o"), True)
+        card = Card(Point("R", "*"), Point("W", "o"), True, state_num)
     elif state_num == 2:
-        card = Card(Point("W", "o"), Point("R", "*"), False)
+        card = Card(Point("W", "o"), Point("R", "*"), False, state_num)
     elif state_num == 3:
-        card = Card(Point("W", "o"), Point("R", "*"), True)
+        card = Card(Point("W", "o"), Point("R", "*"), True, state_num)
     elif state_num == 4:
-        card = Card(Point("R", "*"), Point("W", "o"), False)
+        card = Card(Point("R", "*"), Point("W", "o"), False, state_num)
     elif state_num == 5:
-        card = Card(Point("R", "o"), Point("W", "*"), True)
+        card = Card(Point("R", "o"), Point("W", "*"), True, state_num)
     elif state_num == 6:
-        card = Card(Point("W", "*"), Point("R", "o"), False)
+        card = Card(Point("W", "*"), Point("R", "o"), False, state_num)
     elif state_num == 7:
-        card = Card(Point("W", "*"), Point("R", "o"), True)
+        card = Card(Point("W", "*"), Point("R", "o"), True, state_num)
     else:
-        card = Card(Point("R", "o"), Point("W", "*"), False)
+        card = Card(Point("R", "o"), Point("W", "*"), False,state_num)
     card.set_x_y(x, y)
     return card
 

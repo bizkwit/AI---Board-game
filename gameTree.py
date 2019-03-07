@@ -60,6 +60,38 @@ class State:
                         self.add_child(new_state)
 
 
+
+
+    def generate_recycled_children(self, card):
+        """
+            |||||||||||NOT COMPLETED!!! |||||||||
+        """
+        self.children = []  # removing the old children
+        for i in range(1, 9):  # card state number to get the card
+            if i == card.config_num:
+                continue
+            for y in range(0, self.board_state.num_rows):
+                # if there is no card under previous row, we don't check next rows
+                if y > 0 and self.board_state.point_counter_rows[y - 1] == 0:
+                    break
+                for x in range(0, self.board_state.num_cols):
+                    # if there is no cards in this column and y is greater then 0, we skip the column
+                    # if the column is full, we skip the column
+                    if y > 0 and self.board_state.point_counter_cols[x] == 0 \
+                            or self.board_state.point_counter_cols[x] == self.board_state.num_rows:
+                        continue
+                    card = card_m.get_card(i, x, y)
+                    if self.board_state.validate_move(card):
+                        current_board = copy.deepcopy(self.board_state)
+                        current_board.place_card(card)
+                        new_state = State(current_board, 1, e(current_board), self)
+                        self.add_child(new_state)
+        
+
+    
+    
+
+
 class GameTree:
     """ A game tree class where the game tree in getting managed and handled.
         It has the following properties:
