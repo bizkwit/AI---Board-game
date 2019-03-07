@@ -1,8 +1,8 @@
-from minimax import e
 import card as card_m
 import board as board_m
 import copy
 import time
+from test import e
 
 
 class State:
@@ -42,8 +42,6 @@ class GameTree:
         - root = serves a the root of the current game tree
     """
 
-    DEPTH = 4  # treated as a constant
-
     # default constructor
     def __init__(self):
         self.root = None
@@ -81,14 +79,16 @@ class GameTree:
             print("heuristic: " + repr(e(child.board_state)))
             i = i + 1                
 
-    def create_tree(self):
+    def create_tree(self, depth):
         if self.root is None:
             # creating the root state with empty board
             start = State(1)
             self.update_root(start)
         self.create_states_from_parent(self.root)
-        for child in self.root.children:
-            self.create_states_from_parent(child)
+        depth -= 2
+        for d in range(depth):
+            for child in self.root.children:
+                self.create_states_from_parent(child)
 
 
 
@@ -96,11 +96,14 @@ class GameTree:
 """
 GAMETREE RUNTIME + PRINT CHECKER
 """
+
+"""
 start_time = time.time()
 game = GameTree()
-game.create_tree()
+game.create_tree(3)
 total_time = time.time() - start_time
-game.print_nodes_from_parent(game.root)
-for child in game.root.children:
-        game.print_nodes_from_parent(child)
-print("--- method execution time: %s seconds ---" %(total_time))
+    game.print_nodes_from_parent(game.root)
+    for child in game.root.children:
+            game.print_nodes_from_parent(child)
+    print("--- method execution time: %s seconds ---" %(total_time))
+"""
