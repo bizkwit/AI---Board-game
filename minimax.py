@@ -19,13 +19,13 @@ class Minimax:
                 if player == -1:
                     if child.value < highest_score:
                         highest_score = child.value
-                        best_move = [highest_score]
+                        best_move = highest_score
                 elif player == 1:
                     if child.value > lowest_score:
                         lowest_score = child.value
-                        best_move = [lowest_score]
+                        best_move = lowest_score
             self.bot(child, depth-1, -player)
-            return best_move, child.board_state.print_board(), child.value
+            return best_move, child.board_state.print_board()
 
     @staticmethod
     def e(board):
