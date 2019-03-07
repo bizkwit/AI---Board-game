@@ -206,7 +206,7 @@ while play_again:
 
     board.print_board()
     card_m.print_cards()
-    game_tree.create_tree(game.is_current_player1)
+    game_tree.get_best_state(game.is_current_player1)
     game_tree.print_tree()
     while not game.winner_found and game.moves_left >= 0:
         print("\nTurn: " + str(game.moves_max - game.moves_left + 1) + "/" + str(game.moves_max)

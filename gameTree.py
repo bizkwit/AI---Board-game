@@ -145,7 +145,8 @@ class GameTree:
                 child1.board_state.print_board()
                 child_number = child_number + 1
         print("Root Value: ", self.root.value)
-        print("Root Board: ", self.root.board_state.print_board())
+        print("Root Board: ")
+        self.root.board_state.print_board()
         print("Total Nodes: ", number_of_nodes)
 
 
