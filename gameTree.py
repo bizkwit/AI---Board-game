@@ -1,6 +1,7 @@
 from minimax import e
 import card as card_m
 import board as board_m
+import gameplay as gameplay_m
 import copy
 import time
 
@@ -71,13 +72,10 @@ class State:
 
 
 
-    def generate_recycled_children(self, card):
-        """
-            |||||||||||NOT COMPLETED!!! |||||||||
-        """
+    def generate_recycled_children(self, game , is_max):
         self.children = []  # removing the old children
         for i in range(1, 9):  # card state number to get the card
-            if i == card.config_num:
+            if i == game.last_played_card.config_num:
                 continue
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
@@ -95,6 +93,12 @@ class State:
                         current_board.place_card(card)
                         new_state = State(current_board, 1, e(current_board), self)
                         self.add_child(new_state)
+        if is_max:
+            best_state = max(self.children, key=lambda state: state.value)
+        else:
+            best_state = min(self.children, key=lambda state: state.value)
+        self = best_state
+                    
 
 
 class GameTree:
