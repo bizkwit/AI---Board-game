@@ -3,19 +3,8 @@ import time
 
 class Minimax:
 
-    MAX = 1
-    MIN = -1
-
     def __init__(self):
         self.player = 1
-        #self.moves = []
-
-    def player_switch(self, player):
-        if player == 1:
-            player == -1
-        elif player == -1:
-            player == 1
-        return player
 
     def bot(self, node, depth, player):
         lowest_score = float("-inf")
