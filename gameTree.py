@@ -1,4 +1,4 @@
-import minimax as mm_m
+from minimax import e
 import card as card_m
 import board as board_m
 import copy
@@ -57,9 +57,9 @@ class State:
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
                         if is_last_depth:
-                            value = mm_m.e(current_board)
+                            value = e(current_board)
                         else:
-                            value = mm_m.e(current_board)
+                            value = e(current_board)
                         new_state = State(current_board, 1, value, self)
                         self.add_child(new_state)
         if is_last_depth:
@@ -88,7 +88,7 @@ class State:
                     if self.board_state.validate_move(card):
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
-                        new_state = State(current_board, 1, mm_m.e(current_board), self)
+                        new_state = State(current_board, 1, e(current_board), self)
                         self.add_child(new_state)
 
         if is_max:
