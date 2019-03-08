@@ -108,11 +108,9 @@ class Board:
         if is_valid_move and place_card:
             self.place_card(card)
         return is_valid_move
-
-    def place_recycling_move(self, placed_card, new_card):
-        """ Validate a recycling move"""
-        if placed_card is not None and new_card is not None \
-                and placed_card != new_card:
+    
+    def validate_remove(self, placed_card, remove_card=False):
+        if placed_card is not None:
             is_valid_remove = True
             x1 = placed_card.p1.x_coord
             y1 = placed_card.p1.y_coord
@@ -129,10 +127,23 @@ class Board:
                     # verify if there is any card above
                     if y2 < self.num_rows - 1 and self.matrix[y2 + 1][x2].card is not card_m.emptyPoint.card:
                         is_valid_remove = False
-
-            if is_valid_remove:
+        else:
+            is_valid_remove = False
+        if remove_card and is_valid_remove:       
+            self.remove_card(card)
+        return is_valid_remove
+                        
+    def place_recycling_move(self, placed_card, new_card):
+        """ Validate a recycling move"""
+         if new_card is not None and placed_card != new_card:
+            if validate_remove(placed_card):
+                x1 = placed_card.p1.x_coord
+                y1 = placed_card.p1.y_coord
+                x2 = placed_card.p2.x_coord
+                y2 = placed_card.p2.y_coord
+                
                 self.matrix[y1][x1] = card_m.emptyPoint
-                self.matrix[y2][x2] = card_m.emptyPoint
+                self.matrix[y2][x2] = card_m.emptyPoint                
                 is_valid_move = self.validate_move(new_card)
                 # restore the points if the move cannot be made
                 if not is_valid_move:
