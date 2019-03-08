@@ -145,6 +145,14 @@ def place_card_from_input():
             if game.cards_count > 0:
                 game.cards_count -= 1
 
+# def make_AI_move(is_max, game):
+#     game_tree.get_best_state(player)
+#     board= game_tree.root.board_state
+#     if (game.cards_count == 0):
+#         reutrn
+#     else:
+#         game.cards_count -= 1
+
 
 play_again = True
 print("Welcome to this awesome game")
@@ -186,47 +194,42 @@ while play_again:
 
     # game.player2_name = input("Player2, tell me your name: ")
     if game.is_player1_color_option:
-        print(game.player2_name + ", you have no choice but to play DOTS")
+        print(game.player2_name + ", will play DOTS")
     else:
-        print(game.player2_name + ", you have no choice but to play COLOURS")
+        print(game.player2_name + ", will play COLOURS")
 
     print("\nExample of valid moves:\n\tRegular Move: '0 5 H 1' or '0 5 h 1' "
           "\n\tRecycling move: 'F 2 F 3 3 A 2' or 'f 2 f 3 3 a 2'")
     input("\nPress ENTER.....")
 
-    #board.print_board()
-    #card_m.print_cards()
-    # start_time = time.time()
-    # game_tree.get_best_state(game.is_current_player1)
-    # total_time = time.time() - start_time
-    # game_tree.print_tree()
-    #game_tree.root.board_state.print_board()
+    board.print_board()
+    card_m.print_cards()
+    #game_tree.get_best_state(game.is_current_player1)
+    #game_tree.print_tree()
     while not game.winner_found and game.moves_left >= 0:
         print("\nTurn: " + str(game.moves_max - game.moves_left + 1) + "/" + str(game.moves_max)
               + "\t Cards left: " + str(game.cards_count))
         if game.is_current_player1:
             print(game.player1_name + "'s turn: ", end='')
             if game.is_AI_mode and game.is_AI_player1:
-                game_tree.get_best_state(game.is_current_player1)
+                game_tree.get_best_state(game.is_current_player1, game)
                 board= game_tree.root.board_state
-                game.cards_count -= 1
             else:
                 place_card_from_input()
         else:
             print(game.player2_name + "'s turn: ", end='')
             if game.is_AI_mode and not game.is_AI_player1:
-                game_tree.get_best_state(game.is_current_player1)
+                game_tree.get_best_state(game.is_current_player1, game)
                 board= game_tree.root.board_state
-                game.cards_count -= 1
             else:
                 place_card_from_input()
 
         start_time = time.time()
-        #game_tree.get_best_state(game.is_current_player1)
+        # game_tree.get_best_state(game.is_current_player1)
         total_time = time.time() - start_time
         # game_tree.print_tree()
-        #game_tree.root.board_state.print_board()
-        print("--- method execution time: %s seconds ---" % total_time)
+        # board = game_tree.root.board_state
+        print("--- method execution time: %s seconds ---" % (total_time))
 
         board.print_board()
         card_m.print_cards()

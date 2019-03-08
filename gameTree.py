@@ -130,16 +130,20 @@ class GameTree:
     def update_root(self, current_state):
         self.root = current_state
 
-    def get_best_state(self, is_max):
-        self.root.generate_children()
-        for child in self.root.children:
-            child.generate_children(True, not is_max)
-        # self.root.value, self.root = mm_m.bot(self.root, 2, 1)
-        if is_max:
-            best_state = max(self.root.children, key=lambda state: state.value)
+    def get_best_state(self, is_max, game):
+        if game.cards_count > 0:   
+            self.root.generate_children()
+            for child in self.root.children:
+                child.generate_children(True, not is_max)
+            # self.root.value, self.root = mm_m.bot(self.root, 2, 1)
+            if is_max:
+                best_state = max(self.root.children, key=lambda state: state.value)
+            else:
+                best_state = min(self.root.children, key=lambda state: state.value)
+            self.update_root(best_state)
+            game.cards_count -= 1
         else:
-            best_state = min(self.root.children, key=lambda state: state.value)
-        self.update_root(best_state)
+            self.root.generate_recycled_children(game, is_max)
 
     def print_tree(self):
         number_of_nodes = 1
