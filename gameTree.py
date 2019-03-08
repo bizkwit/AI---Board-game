@@ -37,7 +37,6 @@ class State:
         self.value = new_value
 
     def generate_children(self, is_last_depth=False, is_max=True):
-        self.children = []
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
@@ -70,10 +69,7 @@ class State:
             self.children = []
 
     def generate_recycled_children(self, game , is_max):
-        self.children = []  # removing the old children
         for i in range(1, 9):  # card state number to get the card
-            if i == game.last_played_card.config_num:
-                continue
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
                 if y > 0 and self.board_state.point_counter_rows[y - 1] == 0:
@@ -85,12 +81,12 @@ class State:
                             or self.board_state.point_counter_cols[x] == self.board_state.num_rows:
                         continue
                     card = card_m.get_card(i, x, y)
-                    if self.board_state.validate_move(card):
+                    if card == game.last_played_card:
+                        continue
+                    if self.board_state.validate_remove(card, True):
                         current_board = copy.deepcopy(self.board_state)
-                        current_board.place_card(card)
-                        new_state = State(current_board, 1, e(current_board), self)
-                        self.add_child(new_state)
-
+                        current_board.generate_children(True, is_max)
+                       
         if is_max:
             best_state = max(self.children, key=lambda state: state.value)
         else:
@@ -130,17 +126,23 @@ class GameTree:
     def update_root(self, current_state):
         self.root = current_state
 
+    def get_best_move():
+        self.root.generate_children()
+        for child in self.root.children:
+            child.generate_children(True, not is_max)
+        # self.root.value, self.root = mm_m.bot(self.root, 2, 1)
+        if is_max:
+            best_state = max(self.root.children, key=lambda state: state.value)
+        else:
+            best_state = min(self.root.children, key=lambda state: state.value)
+        return best_state
+     def get_best_recycle_move():
+         self.root.remo
+        
+      
     def get_best_state(self, is_max, game):
         if game.cards_count > 0:   
-            self.root.generate_children()
-            for child in self.root.children:
-                child.generate_children(True, not is_max)
-            # self.root.value, self.root = mm_m.bot(self.root, 2, 1)
-            if is_max:
-                best_state = max(self.root.children, key=lambda state: state.value)
-            else:
-                best_state = min(self.root.children, key=lambda state: state.value)
-            self.update_root(best_state)
+            self.update_root(get_best_move())
             game.cards_count -= 1
         else:
             self.root.generate_recycled_children(game, is_max)
