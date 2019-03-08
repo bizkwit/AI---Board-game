@@ -146,16 +146,6 @@ def place_card_from_input():
                 game.cards_count -= 1
 
 
-def place_card_from_AI():
-    is_valid_move = False
-    card, placed_card = gameTree_m.GameTree.generate_card_move(game)
-    if game.cards_count != 0:  # if true, it is a regular move
-        is_valid_move = board.validate_move(card, True)
-    else:
-        is_valid_move = board.place_recycling_move(placed_card, card)
-    return is_valid_move
-
-
 play_again = True
 print("Welcome to this awesome game")
 
@@ -206,30 +196,32 @@ while play_again:
 
     board.print_board()
     card_m.print_cards()
-    game_tree.get_best_state(game.is_current_player1)
-    game_tree.print_tree()
+    #game_tree.get_best_state(game.is_current_player1)
+    #game_tree.print_tree()
     while not game.winner_found and game.moves_left >= 0:
         print("\nTurn: " + str(game.moves_max - game.moves_left + 1) + "/" + str(game.moves_max)
               + "\t Cards left: " + str(game.cards_count))
-        if game.moves_max - game.moves_left + 1 == 32:
-            1 == 1
         if game.is_current_player1:
             print(game.player1_name + "'s turn: ", end='')
             if game.is_AI_mode and game.is_AI_player1:
-                game.is_AI_move_success = place_card_from_AI()
+                game_tree.get_best_state(game.is_current_player1)
+                board= game_tree.root.board_state
+                game.cards_count -= 1
             else:
                 place_card_from_input()
         else:
             print(game.player2_name + "'s turn: ", end='')
             if game.is_AI_mode and not game.is_AI_player1:
-                game.is_AI_move_success = place_card_from_AI()
+                game_tree.get_best_state(game.is_current_player1)
+                board= game_tree.root.board_state
+                game.cards_count -= 1
             else:
                 place_card_from_input()
 
         start_time = time.time()
-        game_tree.get_best_state(game.is_current_player1)
+        # game_tree.get_best_state(game.is_current_player1)
         total_time = time.time() - start_time
-        game_tree.print_tree()
+        # game_tree.print_tree()
         # board = game_tree.root.board_state
         print("--- method execution time: %s seconds ---" % (total_time))
 
