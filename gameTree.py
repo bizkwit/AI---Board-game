@@ -1,7 +1,6 @@
-from minimax import e
+import minimax as mm_m
 import card as card_m
 import board as board_m
-import gameplay as gameplay_m
 import copy
 import time
 
@@ -38,6 +37,7 @@ class State:
         self.value = new_value
 
     def generate_children(self, is_last_depth=False, is_max=True):
+        self.children = []
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
@@ -57,9 +57,9 @@ class State:
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
                         if is_last_depth:
-                            value = e(current_board)
+                            value = mm_m.e(current_board)
                         else:
-                            value = 0
+                            value = mm_m.e(current_board)
                         new_state = State(current_board, 1, value, self)
                         self.add_child(new_state)
         if is_last_depth:
@@ -68,9 +68,6 @@ class State:
             else:
                 self.value = min(child.value for child in self.children)
             self.children = []
-
-
-
 
     def generate_recycled_children(self, game , is_max):
         self.children = []  # removing the old children
@@ -91,14 +88,28 @@ class State:
                     if self.board_state.validate_move(card):
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
-                        new_state = State(current_board, 1, e(current_board), self)
+                        new_state = State(current_board, 1, mm_m.e(current_board), self)
                         self.add_child(new_state)
+
         if is_max:
             best_state = max(self.children, key=lambda state: state.value)
         else:
             best_state = min(self.children, key=lambda state: state.value)
         self = best_state
-                    
+
+    def get_min(self):
+        best_child = self.children[0]
+        for child in self.children:
+            if best_child.value > child.value:
+                best_child = child
+        return best_child
+
+    def get_max(self):
+        best_child = self.children[0]
+        for child in self.children:
+            if best_child.value < child.value:
+                best_child = child
+        return best_child
 
 
 class GameTree:
@@ -123,6 +134,7 @@ class GameTree:
         self.root.generate_children()
         for child in self.root.children:
             child.generate_children(True, not is_max)
+        # self.root.value, self.root = mm_m.bot(self.root, 2, 1)
         if is_max:
             best_state = max(self.root.children, key=lambda state: state.value)
         else:
@@ -148,15 +160,3 @@ class GameTree:
         print("Root Board: ")
         self.root.board_state.print_board()
         print("Total Nodes: ", number_of_nodes)
-
-
-"""
-GAMETREE RUNTIME + PRINT CHECKER
-"""
-start_time = time.time()
-# game = GameTree()
-# game.create_tree()
-total_time = time.time() - start_time
-# game.print_tree()
-
-print("--- method execution time: %s seconds ---" % (total_time))
