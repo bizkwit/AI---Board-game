@@ -181,3 +181,7 @@ class GameTree:
         print("Root Board: ")
         self.root.board_state.print_board()
         print("Total Nodes: ", number_of_nodes)
+
+    def get_e(self):
+        global nb_e
+        return nb_e
