@@ -36,7 +36,7 @@ class State:
     def set_state_value(self, new_value):
         self.value = new_value
 
-    def generate_children(self, is_last_depth=False, is_max=True):
+    def generate_best_move_state(self, is_last_depth=False, is_max=True):
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
@@ -58,7 +58,7 @@ class State:
                         if is_last_depth:
                             value = e(current_board)
                         else:
-                            value = e(current_board)
+                            value = 0
                         new_state = State(current_board, 1, value, self)
                         self.add_child(new_state)
         if is_last_depth:
@@ -67,8 +67,9 @@ class State:
             else:
                 self.value = min(child.value for child in self.children)
             self.children = []
-    # !!!!!!!!!!!!  NOT DONE YET !!!!!!!!!!!!!!!!!
-    def generate_recycled_children(self, game , is_max):
+
+    # !!!!!!!!!!!!  NEEDS TESTING !!!!!!!!!!!!!!!!!
+    def generate_best_recycled_move_state(self, removed_card, is_max):
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
@@ -81,32 +82,20 @@ class State:
                             or self.board_state.point_counter_cols[x] == self.board_state.num_rows:
                         continue
                     card = card_m.get_card(i, x, y)
-                    if card == game.last_played_card:
+                    if card == removed_card:
                         continue
-                    if self.board_state.validate_remove(card, True):
-                        current_board = copy.deepcopy(self.board_state)
-                        self.boa
-                        current_board.generate_children(True, is_max)
-                       
+                    if self.board_state.validate_move(card):
+                        board = copy.deepcopy(self.board_state)
+                        board.place_card(card)
+                        new_state = State(board, 1, e(board), self)
+                        self.add_child(new_state)
         if is_max:
             best_state = max(self.children, key=lambda state: state.value)
         else:
             best_state = min(self.children, key=lambda state: state.value)
-        self = best_state
-
-    def get_min(self):
-        best_child = self.children[0]
-        for child in self.children:
-            if best_child.value > child.value:
-                best_child = child
-        return best_child
-
-    def get_max(self):
-        best_child = self.children[0]
-        for child in self.children:
-            if best_child.value < child.value:
-                best_child = child
-        return best_child
+        self.board_state = best_state.board_state
+        self.value = best_state.value
+        self.children = []
 
 
 class GameTree:
@@ -128,9 +117,9 @@ class GameTree:
         self.root = current_state
 
     def get_best_move(self, is_max):
-        self.root.generate_children()
+        self.root.generate_best_move_state()
         for child in self.root.children:
-            child.generate_children(True, not is_max)
+            child.generate_best_move_state(True, not is_max)
         # self.root.value, self.root = mm_m.bot(self.root, 2, 1)
         if is_max:
             best_state = max(self.root.children, key=lambda state: state.value)
@@ -138,11 +127,33 @@ class GameTree:
             best_state = min(self.root.children, key=lambda state: state.value)
         return best_state
     
-    # !!!!!!!!!!!!  NOT DONE YET !!!!!!!!!!!!!!!!!
+    # !!!!!!!!!!!! NEEDS TESTING !!!!!!!!!!!!!!!!!
     def get_best_recycle_move(self, game, is_max):
-        self.root.generate_recycled_children(game, is_max)
-            
-        
+        best_state = None
+        for y in range(self.root.board_state.num_rows):
+            # if the row has no cards, we stop
+            if self.root.board_state.point_counter_rows[y] == 0:
+                break
+            for x in range(self.root.board_state.num_cols):
+                # if the column has no cards, we skip
+                if self.root.board.point_counter_cols[x] == 0 or \
+                   self.root.board_state.matrix[y][x].card == game.last_card_played:
+                    continue
+                # if valid remove, we create a new state with removed card
+                if self.root.board.validate_remove(self.root.board_state.matrix[y][x].card):
+                    board = copy.deepcopy(self.root.board_state)
+                    removed_card = self.root.board_state.matrix[y][x].card
+                    board.remove_card(self.root.board_state.matrix[y][x].card)
+                    child = State(board, is_max, 0, self.root)
+                    # generating best recycling move state for this removed card
+                    child.generate_best_recycled_move_state(removed_card, is_max)
+                    if is_max:
+                        if best_state.value < child.value:
+                            best_state = child
+                    else:
+                        if best_state.value > child.value:
+                            best_state = child
+        self.update_root(best_state)
       
     def get_best_state(self, is_max, game):
         if game.cards_count > 0:   
