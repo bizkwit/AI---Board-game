@@ -57,11 +57,7 @@ class Card:
             self.p2.x_coord = x
             self.p2.y_coord = y + 1
 
-    # a function to update the coordinates of the card before inserting
-    # checks if the card is vertical or horizontal and updates correspondly
-    # def update_coord(self,x,y):
-    #   self.p1.x_coord = x
-    #  self.p1.y_coord = y
+
 
 
 class Point:
@@ -132,17 +128,6 @@ def get_card(state_num, x=0, y=0):
 
 # prints all the cards for the player to see
 def print_cards():
-    # colorama.init(autoreset=True)
-    # RF = colored("*", "grey","on_red")
-    # RE = colored("o", "grey","on_red")
-    # WF = colored("*", "grey","on_white")
-    # WE = colored("o","grey","on_white")
-
-    # print("Here are the card configurations for you to choose:")
-    # print("  ", RF,"  ",WE,"  ",RE,"  ",WF)
-    # print(RF+WE, WE,WE+RF,RF,RE+WF,WF,WF+RE,RE)
-    # print("1 ","2","3 ","4","5 ","6","7 ","8")
-
     print()
     print("Here are the card configurations for you to choose:")
     print("       ", "|R*|", "       ", "|Wo|", "       ", "|Ro|", "       ", "|W*|")
