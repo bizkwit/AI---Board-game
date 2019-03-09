@@ -4,7 +4,6 @@ import board as board_m
 import copy
 import time
 
-
 class State:
     """ A state class represents a state which is a node in a game tree.
         A state is a possible next move that can be made.
@@ -37,6 +36,7 @@ class State:
         self.value = new_value
 
     def generate_children(self, is_last_depth=False, is_max=True):
+        global nb_e
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
@@ -56,9 +56,9 @@ class State:
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
                         if is_last_depth:
-                            value = e(current_board)
+                            value, nb_e = e(current_board)
                         else:
-                            value = e(current_board)
+                            value, nb_e = e(current_board)
                         new_state = State(current_board, 1, value, self)
                         self.add_child(new_state)
         if is_last_depth:
@@ -85,7 +85,6 @@ class State:
                         continue
                     if self.board_state.validate_remove(card, True):
                         current_board = copy.deepcopy(self.board_state)
-                        self.boa
                         current_board.generate_children(True, is_max)
                        
         if is_max:
@@ -141,9 +140,7 @@ class GameTree:
     # !!!!!!!!!!!!  NOT DONE YET !!!!!!!!!!!!!!!!!
     def get_best_recycle_move(self, game, is_max):
         self.root.generate_recycled_children(game, is_max)
-            
-        
-      
+
     def get_best_state(self, is_max, game):
         if game.cards_count > 0:   
             self.update_root(self.get_best_move(is_max))
