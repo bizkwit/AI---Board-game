@@ -127,7 +127,7 @@ class GameTree:
     def update_root(self, current_state):
         self.root = current_state
 
-    def get_best_move(is_max):
+    def get_best_move(self, is_max):
         self.root.generate_children()
         for child in self.root.children:
             child.generate_children(True, not is_max)
@@ -139,17 +139,17 @@ class GameTree:
         return best_state
     
     # !!!!!!!!!!!!  NOT DONE YET !!!!!!!!!!!!!!!!!
-    def get_best_recycle_move(game, is_max):
+    def get_best_recycle_move(self, game, is_max):
         self.root.generate_recycled_children(game, is_max)
             
         
       
     def get_best_state(self, is_max, game):
         if game.cards_count > 0:   
-            self.update_root(get_best_move(is_max))
+            self.update_root(self.get_best_move(is_max))
             game.cards_count -= 1
         else:
-            get_best_recycle_move(game, is_max)
+            self.get_best_recycle_move(game, is_max)
 
     def print_tree(self):
         number_of_nodes = 1

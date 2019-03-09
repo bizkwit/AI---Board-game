@@ -130,13 +130,13 @@ class Board:
         else:
             is_valid_remove = False
         if remove_card and is_valid_remove:       
-            self.remove_card(card)
+            self.remove_card(placed_card)
         return is_valid_remove
                         
     def place_recycling_move(self, placed_card, new_card):
         """ Validate a recycling move"""
-         if new_card is not None and placed_card != new_card:
-            if validate_remove(placed_card):
+        if new_card is not None and placed_card != new_card:
+            if self.validate_remove(placed_card):
                 x1 = placed_card.p1.x_coord
                 y1 = placed_card.p1.y_coord
                 x2 = placed_card.p2.x_coord
