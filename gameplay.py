@@ -2,6 +2,7 @@ import board as board_m
 import card as card_m
 import gameTree as gameTree_m
 import time
+from minimax import get_e
 
 
 class Game:
@@ -28,6 +29,8 @@ class Game:
         self.is_player1_color_option = None
         self.player1_name = "Player1"
         self.player2_name = "Player2"
+
+        self.trace_nb = 1
 
 
 letterConversion = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7}
@@ -156,6 +159,7 @@ def place_card_from_input():
 
 
 play_again = True
+
 print("Welcome to this awesome game")
 
 while play_again:
@@ -166,6 +170,9 @@ while play_again:
     game.is_AI_mode = get_yes_no_input("Do you want to challenge the AI?")
     if game.is_AI_mode:
         game.is_minimax_trace_required = get_yes_no_input("Do you want to print the Mini-Max Trace?")
+        if game.is_minimax_trace_required:
+            filename = "tracemm" + repr(game.trace_nb) + ".txt"
+            trace_file = open(filename, "a")
         game.is_AI_player1 = not get_yes_no_input("Do you want to play first?")
         if game.is_AI_player1:
             game.player1_name = "AI"
@@ -214,6 +221,9 @@ while play_again:
             print(game.player1_name + "'s turn: ", end='')
             if game.is_AI_mode and game.is_AI_player1:
                 game_tree.get_best_state(game.is_current_player1, game)
+                if game.is_minimax_trace_required:
+                    e_times = str(get_e)
+                    trace_file.write(e_times)
                 board= game_tree.root.board_state
             else:
                 place_card_from_input()
@@ -271,3 +281,4 @@ while play_again:
     print("=================================")
 
     play_again = get_yes_no_input("\nDo you want to play one more time?")
+    game.trace_nb += 1
