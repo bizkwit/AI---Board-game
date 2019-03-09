@@ -2,6 +2,7 @@
 class MiniMax:
 
     matrix_point_value = None
+    e_call_counter = 0
 
     @classmethod
     def calculate_board_values(cls, board):
@@ -15,6 +16,7 @@ class MiniMax:
 
 
 def e(board):
+    MiniMax.e_call_counter += 1
     if MiniMax.matrix_point_value is None:
         MiniMax.calculate_board_values(board)
     result = 0
