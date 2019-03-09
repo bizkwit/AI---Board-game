@@ -21,6 +21,7 @@ class Game:
 
         self.is_file_input = False
         self.winner_found = False
+        self.winner = board_m.Winner.NONE
 
         self.is_current_player1 = True
 
@@ -233,33 +234,33 @@ while play_again:
         if game.is_AI_move_success is not None and not game.is_AI_move_success:
             if game.is_AI_player1:
                 if game.is_player1_color_option:
-                    winner = board_m.Winner.DOTS
+                    game.winner = board_m.Winner.DOTS
                 else:
-                    winner = board_m.Winner.COLORS
+                    game.winner = board_m.Winner.COLORS
             else:
                 if game.is_player1_color_option:
-                    winner = board_m.Winner.COLORS
+                    game.winner = board_m.Winner.COLORS
                 else:
-                    winner = board_m.Winner.DOTS
+                    game.winner = board_m.Winner.DOTS
         else:
-            winner = board.verify_winning_state()
+            game.winner = board.verify_winning_state()
 
-        if winner == board_m.Winner.NONE:
+        if game.winner == board_m.Winner.NONE:
             game.is_current_player1 = not game.is_current_player1
-        elif winner == board_m.Winner.COLORS or winner == board_m.Winner.DOTS:
+        elif game.winner == board_m.Winner.COLORS or game.winner == board_m.Winner.DOTS:
             game.winner_found = True
-        elif winner == board_m.Winner.TIE:
+        elif game.winner == board_m.Winner.TIE:
             game.moves_left = 0
         game.moves_left -= 1
     print("=================================")
     if not game.winner_found:
         print("Game ended with a tie")
-    elif winner == board_m.Winner.COLORS:  # colors won
+    elif game.winner == board_m.Winner.COLORS:  # colors won
         if game.is_player1_color_option:
             print("Congratulations " + game.player1_name + ", you WON !!!")
         else:
             print("Congratulations " + game.player2_name + ", you WON !!!")
-    elif winner == board_m.Winner.DOTS:  # dots won
+    elif game.winner == board_m.Winner.DOTS:  # dots won
         if game.is_player1_color_option:
             print("Congratulations " + game.player2_name + ", you WON !!!")
         else:
