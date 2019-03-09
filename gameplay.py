@@ -243,7 +243,7 @@ while play_again:
         total_time = time.time() - start_time
         # game_tree.print_tree()
         # board = game_tree.root.board_state
-        print("--- method execution time: %s seconds ---" % (total_time))
+        #print("--- method execution time: %s seconds ---" % (total_time))
 
         board.print_board()
         card_m.print_cards()
