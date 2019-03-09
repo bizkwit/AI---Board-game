@@ -2,7 +2,7 @@ import board as board_m
 import card as card_m
 import gameTree as gameTree_m
 import time
-from minimax import get_e
+from minimax import *
 
 
 class Game:
@@ -222,7 +222,8 @@ while play_again:
             if game.is_AI_mode and game.is_AI_player1:
                 game_tree.get_best_state(game.is_current_player1, game)
                 if game.is_minimax_trace_required:
-                    e_times = repr(game_tree.root.get_counter())
+                    #e_times = repr(game_tree.root.get_counter())
+                    e_times = repr(MiniMax.e_call_counter)
                     trace_file.write(e_times)
                 board= game_tree.root.board_state
             else:
@@ -232,7 +233,7 @@ while play_again:
             if game.is_AI_mode and not game.is_AI_player1:
                 game_tree.get_best_state(game.is_current_player1, game)
                 if game.is_minimax_trace_required:
-                    e_times = repr(game_tree.root.get_counter())
+                    e_times = repr(MiniMax.e_call_counter)
                     trace_file.write(e_times)
                 board= game_tree.root.board_state
             else:

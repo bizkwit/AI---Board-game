@@ -57,7 +57,7 @@ class State:
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
                         if is_last_depth:
-                            value= MiniMax.e(current_board)
+                            value = e(current_board)
                             self.counter += 1
                         else:
                             value = 0
@@ -89,7 +89,7 @@ class State:
                     if self.board_state.validate_move(card):
                         board = copy.deepcopy(self.board_state)
                         board.place_card(card)
-                        new_state = State(board, 1, MiniMax.e(board), self)
+                        new_state = State(board, 1, e(board), self)
                         self.add_child(new_state)
         if is_max:
             best_state = max(self.children, key=lambda state: state.value)
