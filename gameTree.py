@@ -1,8 +1,8 @@
-from minimax import e
 import card as card_m
 import board as board_m
 import copy
 import time
+from minimax import *
 
 class State:
     """ A state class represents a state which is a node in a game tree.
@@ -22,6 +22,7 @@ class State:
         self.parent = parent_state
         self.children = []
         self.board_state = board
+        self.counter = 0
 
     # inserts a new state into the children list
 
@@ -56,7 +57,8 @@ class State:
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
                         if is_last_depth:
-                            value, nb_e = e(current_board)
+                            value= MiniMax.e(current_board)
+                            self.counter += 1
                         else:
                             value = 0
                         new_state = State(current_board, 1, value, self)
@@ -87,7 +89,7 @@ class State:
                     if self.board_state.validate_move(card):
                         board = copy.deepcopy(self.board_state)
                         board.place_card(card)
-                        new_state = State(board, 1, e(board), self)
+                        new_state = State(board, 1, MiniMax.e(board), self)
                         self.add_child(new_state)
         if is_max:
             best_state = max(self.children, key=lambda state: state.value)
@@ -96,6 +98,9 @@ class State:
         self.board_state = best_state.board_state
         self.value = best_state.value
         self.children = []
+
+    def get_counter(self):
+        return self.counter
 
 
 class GameTree:
@@ -183,5 +188,4 @@ class GameTree:
         print("Total Nodes: ", number_of_nodes)
 
     def get_e(self):
-        global nb_e
-        return nb_e
+        return MiniMax.e_call_counter

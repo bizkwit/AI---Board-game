@@ -222,7 +222,7 @@ while play_again:
             if game.is_AI_mode and game.is_AI_player1:
                 game_tree.get_best_state(game.is_current_player1, game)
                 if game.is_minimax_trace_required:
-                    e_times = str(get_e)
+                    e_times = repr(game_tree.root.get_counter())
                     trace_file.write(e_times)
                 board= game_tree.root.board_state
             else:
@@ -231,6 +231,9 @@ while play_again:
             print(game.player2_name + "'s turn: ", end='')
             if game.is_AI_mode and not game.is_AI_player1:
                 game_tree.get_best_state(game.is_current_player1, game)
+                if game.is_minimax_trace_required:
+                    e_times = repr(game_tree.root.get_counter())
+                    trace_file.write(e_times)
                 board= game_tree.root.board_state
             else:
                 place_card_from_input()
