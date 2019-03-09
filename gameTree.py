@@ -81,13 +81,12 @@ class State:
                             or self.board_state.point_counter_cols[x] == self.board_state.num_rows:
                         continue
                     card = card_m.get_card(i, x, y)
-                    if card == game.last_played_card:
+                    if card == game.last_card_played:
                         continue
                     if self.board_state.validate_remove(card, True):
                         current_board = copy.deepcopy(self.board_state)
                         self.boa
-                        current_board.generate_children(True, is_max)
-                       
+                        current_board.generate_children(True, is_max)                       
         if is_max:
             best_state = max(self.children, key=lambda state: state.value)
         else:
