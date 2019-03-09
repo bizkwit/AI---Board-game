@@ -129,18 +129,18 @@ class GameTree:
     
     # !!!!!!!!!!!! NEEDS TESTING !!!!!!!!!!!!!!!!!
     def get_best_recycle_move(self, game, is_max):
-        best_state = None
+        best_state = self.root
         for y in range(self.root.board_state.num_rows):
             # if the row has no cards, we stop
             if self.root.board_state.point_counter_rows[y] == 0:
                 break
             for x in range(self.root.board_state.num_cols):
                 # if the column has no cards, we skip
-                if self.root.board.point_counter_cols[x] == 0 or \
+                if self.root.board_state.point_counter_cols[x] == 0 or \
                    self.root.board_state.matrix[y][x].card == game.last_card_played:
                     continue
                 # if valid remove, we create a new state with removed card
-                if self.root.board.validate_remove(self.root.board_state.matrix[y][x].card):
+                if self.root.board_state.validate_remove(self.root.board_state.matrix[y][x].card):
                     board = copy.deepcopy(self.root.board_state)
                     removed_card = self.root.board_state.matrix[y][x].card
                     board.remove_card(self.root.board_state.matrix[y][x].card)
