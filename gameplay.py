@@ -36,7 +36,6 @@ class Game:
 
 letterConversion = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7}
 
-
 def try_parse_int(s):
     try:
         return int(s)
@@ -158,7 +157,6 @@ def place_card_from_input():
 #     else:
 #         game.cards_count -= 1
 
-
 play_again = True
 
 print("Welcome to this awesome game")
@@ -173,8 +171,9 @@ while play_again:
         game.is_minimax_trace_required = get_yes_no_input("Do you want to print the Mini-Max Trace?")
         if game.is_minimax_trace_required:
             filename = "tracemm" + repr(game.trace_nb) + ".txt"
-            if os.path.isfile(filename):
-                filename = "tracemm" + repr(game.trace_nb + 1) + ".txt"
+            while os.path.isfile(filename):
+                game.trace_nb += 1
+                filename = "tracemm" + repr(game.trace_nb) + ".txt"
             trace_file = open(filename, "a")
         game.is_AI_player1 = not get_yes_no_input("Do you want to play first?")
         if game.is_AI_player1:
@@ -305,5 +304,5 @@ while play_again:
     print("=================================")
 
     trace_file.close()
-    play_again = get_yes_no_input("\nDo you want to play one more time?")
     game.trace_nb += 1
+    play_again = get_yes_no_input("\nDo you want to play one more time?")
