@@ -23,7 +23,8 @@ class State:
         self.children = []
         self.board_state = board
         self.counter = 0
-
+        self.e_value = 0
+        self.e_array = []
     # inserts a new state into the children list
 
     def add_child(self, new_child):
@@ -59,6 +60,8 @@ class State:
                         if is_last_depth:
                             value = e(current_board)
                             self.counter += 1
+                            self.e_value = value
+                            self.e_array.append(value)
                         else:
                             value = 0
                         new_state = State(current_board, 1, value, self)
@@ -102,6 +105,11 @@ class State:
     def get_counter(self):
         return self.counter
 
+    def get_e_val(self):
+        return self.value
+
+    def get_e_array(self):
+        return self.e_array
 
 class GameTree:
     """ A game tree class where the game tree in getting managed and handled.

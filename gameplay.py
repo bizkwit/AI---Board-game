@@ -3,6 +3,7 @@ import card as card_m
 import gameTree as gameTree_m
 import time
 from minimax import *
+import os.path
 
 
 class Game:
@@ -172,6 +173,8 @@ while play_again:
         game.is_minimax_trace_required = get_yes_no_input("Do you want to print the Mini-Max Trace?")
         if game.is_minimax_trace_required:
             filename = "tracemm" + repr(game.trace_nb) + ".txt"
+            if os.path.isfile(filename):
+                filename = "tracemm" + repr(game.trace_nb + 1) + ".txt"
             trace_file = open(filename, "a")
         game.is_AI_player1 = not get_yes_no_input("Do you want to play first?")
         if game.is_AI_player1:
@@ -222,9 +225,14 @@ while play_again:
             if game.is_AI_mode and game.is_AI_player1:
                 game_tree.get_best_state(game.is_current_player1, game)
                 if game.is_minimax_trace_required:
-                    #e_times = repr(game_tree.root.get_counter())
-                    e_times = repr(MiniMax.e_call_counter)
+                    e_times = repr(MiniMax.e_call_counter) + "\n"
+                    e_value = "{:.1f}".format(game_tree.root.get_e_val()) + "\n"
+                    e_array = game_tree.root.get_e_array()
                     trace_file.write(e_times)
+                    trace_file.write(e_value)
+                    trace_file.write("\n")
+                    for item in e_array:
+                        trace_file.write("%s\n" % item)
                 board= game_tree.root.board_state
             else:
                 place_card_from_input()
@@ -233,8 +241,14 @@ while play_again:
             if game.is_AI_mode and not game.is_AI_player1:
                 game_tree.get_best_state(game.is_current_player1, game)
                 if game.is_minimax_trace_required:
-                    e_times = repr(MiniMax.e_call_counter)
+                    e_times = repr(MiniMax.e_call_counter) + "\n"
+                    e_value = "{:.1f}".format(game_tree.root.get_e_val()) + "\n"
+                    e_array = game_tree.root.get_e_array()
                     trace_file.write(e_times)
+                    trace_file.write(e_value)
+                    trace_file.write("\n")
+                    for item in e_array:
+                        trace_file.write("%s\n" % item)
                 board= game_tree.root.board_state
             else:
                 place_card_from_input()
@@ -284,5 +298,6 @@ while play_again:
             print("Congratulations " + game.player1_name + ", you WON !!!")
     print("=================================")
 
+    trace_file.close()
     play_again = get_yes_no_input("\nDo you want to play one more time?")
     game.trace_nb += 1
