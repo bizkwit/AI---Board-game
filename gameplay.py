@@ -139,6 +139,7 @@ def place_card_from_input():
                     print(" *** You must change card's rotation, position or both ***")
                 else:
                     is_valid_move = board.place_recycling_move(placed_card, card)
+                    game.last_card_played
         if not is_valid_move:
             if game.is_file_input:
                 game.is_file_input = False
@@ -223,16 +224,17 @@ while play_again:
             print(game.player1_name + "'s turn: ", end='')
             if game.is_AI_mode and game.is_AI_player1:
                 start_time = time.time()
-                game_tree.get_best_state( game.is_current_player1, game)
+                game_tree.get_best_state(game.is_current_player1, game)
                 if game.is_minimax_trace_required:
                     e_times = repr(MiniMax.e_call_counter) + "\n"
-                    e_value = "{:.1f}".format(game_tree.root.get_e_val()) + "\n"
+                    e_value = "{:.1f}".format(game_tree.root.value) + "\n"
                     e_array = game_tree.root.get_e_array()
                     trace_file.write(e_times)
                     trace_file.write(e_value)
                     trace_file.write("\n")
                     for item in e_array:
                         trace_file.write("%s\n" % item)
+                    trace_file.write("\n")
                 board= game_tree.root.board_state
                 total_time = time.time() - start_time
                 print("--- AI move time: %s seconds ---" % (total_time), " \t with value: ",game_tree.root.value)
@@ -245,13 +247,14 @@ while play_again:
                 game_tree.get_best_state(not game.is_current_player1, game)
                 if game.is_minimax_trace_required:
                     e_times = repr(MiniMax.e_call_counter) + "\n"
-                    e_value = "{:.1f}".format(game_tree.root.get_e_val()) + "\n"
+                    e_value = "{:.1f}".format(game_tree.root.value) + "\n"
                     e_array = game_tree.root.get_e_array()
                     trace_file.write(e_times)
                     trace_file.write(e_value)
                     trace_file.write("\n")
                     for item in e_array:
                         trace_file.write("%s\n" % item)
+                    trace_file.write("\n")
                 board= game_tree.root.board_state
                 total_time = time.time() - start_time
                 print("--- AI move time: %s seconds ---" % (total_time), " \t with value: ",game_tree.root.value)
@@ -303,6 +306,9 @@ while play_again:
             print("Congratulations " + game.player1_name + ", you WON !!!")
     print("=================================")
 
-    trace_file.close()
-    game.trace_nb += 1
+    try:
+        trace_file.close()
+        game.trace_nb += 1
+    except NameError:
+        pass
     play_again = get_yes_no_input("\nDo you want to play one more time?")
