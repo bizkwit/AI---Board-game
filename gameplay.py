@@ -235,9 +235,9 @@ while play_again:
                     for item in e_array:
                         trace_file.write("%s\n" % item)
                     trace_file.write("\n")
-                board= game_tree.root.board_state
+                board = game_tree.root.board_state
                 total_time = time.time() - start_time
-                print("--- AI move time: %s seconds ---" % (total_time), " \t with value: ",game_tree.root.value)
+                print("--- AI move time: %s seconds ---" % total_time, " \t with value: ", game_tree.root.value)
             else:
                 place_card_from_input()
         else:
@@ -255,9 +255,9 @@ while play_again:
                     for item in e_array:
                         trace_file.write("%s\n" % item)
                     trace_file.write("\n")
-                board= game_tree.root.board_state
+                board = game_tree.root.board_state
                 total_time = time.time() - start_time
-                print("--- AI move time: %s seconds ---" % (total_time), " \t with value: ",game_tree.root.value)
+                print("--- AI move time: %s seconds ---" % total_time, " \t with value: ", game_tree.root.value)
             else:
                 place_card_from_input()
 
