@@ -223,7 +223,8 @@ while play_again:
         if game.is_current_player1:
             print(game.player1_name + "'s turn: ", end='')
             if game.is_AI_mode and game.is_AI_player1:
-                game_tree.get_best_state(game.is_current_player1, game)
+                start_time = time.time()
+                game_tree.get_best_state(not game.is_current_player1, game)
                 if game.is_minimax_trace_required:
                     e_times = repr(MiniMax.e_call_counter) + "\n"
                     e_value = "{:.1f}".format(game_tree.root.get_e_val()) + "\n"
@@ -234,12 +235,15 @@ while play_again:
                     for item in e_array:
                         trace_file.write("%s\n" % item)
                 board= game_tree.root.board_state
+                total_time = time.time() - start_time
+                print("--- AI move time: %s seconds ---" % (total_time), " \t with value: ",game_tree.root.value)
             else:
                 place_card_from_input()
         else:
             print(game.player2_name + "'s turn: ", end='')
             if game.is_AI_mode and not game.is_AI_player1:
-                game_tree.get_best_state(game.is_current_player1, game)
+                start_time = time.time()
+                game_tree.get_best_state(not game.is_current_player1, game)
                 if game.is_minimax_trace_required:
                     e_times = repr(MiniMax.e_call_counter) + "\n"
                     e_value = "{:.1f}".format(game_tree.root.get_e_val()) + "\n"
@@ -250,12 +254,14 @@ while play_again:
                     for item in e_array:
                         trace_file.write("%s\n" % item)
                 board= game_tree.root.board_state
+                total_time = time.time() - start_time
+                print("--- AI move time: %s seconds ---" % (total_time), " \t with value: ",game_tree.root.value)
             else:
                 place_card_from_input()
 
-        start_time = time.time()
+        # start_time = time.time()
         # game_tree.get_best_state(game.is_current_player1)
-        total_time = time.time() - start_time
+        # total_time = time.time() - start_time
         # game_tree.print_tree()
         # board = game_tree.root.board_state
         #print("--- method execution time: %s seconds ---" % (total_time))
