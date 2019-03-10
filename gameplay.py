@@ -83,7 +83,7 @@ def validate_and_parse_move(inputs):
 
     elif input_length == 7:
         # validation of x coordinates for points to be recycled
-        if inputs[0] in letterConversion and inputs[2] in letterConversion:
+        if game.cards_count == 0 and inputs[0] in letterConversion and inputs[2] in letterConversion:
             inputs[0] = letterConversion[inputs[0]]  # 1st point current x coordinate
             inputs[2] = letterConversion[inputs[2]]  # 2nd point current x coordinate
             inputs[1] = try_parse_int(inputs[1])  # 1st point current y coordinate
