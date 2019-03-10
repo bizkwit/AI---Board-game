@@ -244,7 +244,7 @@ while play_again:
             print(game.player2_name + "'s turn: ", end='')
             if game.is_AI_mode and not game.is_AI_player1:
                 start_time = time.time()
-                game_tree.get_best_state(not game.is_current_player1, game)
+                game_tree.get_best_state(game.is_current_player1, game)
                 if game.is_minimax_trace_required:
                     e_times = repr(MiniMax.e_call_counter) + "\n"
                     e_value = "{:.1f}".format(game_tree.root.value) + "\n"

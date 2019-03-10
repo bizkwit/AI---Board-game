@@ -57,3 +57,23 @@ g 6 h 6 5 a 8 no
 h 7 h 8 1 a 2 bad
 a 1 b 1 2 e 3 bad
 f 11 f 12 8 e 3 good
+
+y
+n
+y
+2
+.
+0 1 A 1
+0 1 C 1
+0 1 E 1
+0 1 G 1
+0 5 C 2
+0 5 E 2
+0 5 G 2
+0 3 C 3
+0 3 G 3
+0 7 C 4
+0 7 G 4
+0 1 C 5
+h 7 h 8 1 a 2
+a 1 b 1 2 e 3

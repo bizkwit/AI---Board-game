@@ -121,11 +121,12 @@ class Board:
             if y2 < self.num_rows - 1:
                 if placed_card.is_horizontal:
                     # verify if there is any card above for horizontally placed card
-                    if self.matrix[y2 + 1][x1].card is not card_m.emptyPoint.card:
+                    if self.matrix[y1 + 1][x1] is not card_m.emptyPoint or \
+                       self.matrix[y2 + 1][x2] is not card_m.emptyPoint:
                         is_valid_remove = False
                 else:
                     # verify if there is any card above
-                    if y2 < self.num_rows - 1 and self.matrix[y2 + 1][x2].card is not card_m.emptyPoint.card:
+                    if y2 < self.num_rows - 1 and self.matrix[y2 + 1][x2] is not card_m.emptyPoint:
                         is_valid_remove = False
         else:
             is_valid_remove = False
