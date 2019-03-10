@@ -74,7 +74,7 @@ class State:
             self.children = []
 
     # !!!!!!!!!!!!  NEEDS TESTING !!!!!!!!!!!!!!!!!
-    def generate_best_recycled_move_state(self, removed_card, is_max):
+    def generate_best_recycled_move_state(self, removed_card, is_max, game):
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
@@ -94,6 +94,7 @@ class State:
                         board.place_card(card)
                         new_state = State(board, 1, e(board), self)
                         self.add_child(new_state)
+                        game.last_card_played = card
         if is_max:
             best_state = max(self.children, key=lambda state: state.value)
         else:
@@ -159,7 +160,7 @@ class GameTree:
                     board.remove_card(self.root.board_state.matrix[y][x].card)
                     child = State(board, is_max, 0, self.root)
                     # generating best recycling move state for this removed card
-                    child.generate_best_recycled_move_state(removed_card, is_max)
+                    child.generate_best_recycled_move_state(removed_card, is_max, game)
                     if is_max:
                         if best_state.value < child.value:
                             best_state = child
