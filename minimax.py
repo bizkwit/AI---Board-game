@@ -35,3 +35,7 @@ def e(board):
             elif board.matrix[row][col].value == "Ro":
                 result -= 1.5 * MiniMax.matrix_point_value[row][col]
     return result
+
+def get_e():
+    global nb_e
+    return str(nb_e)

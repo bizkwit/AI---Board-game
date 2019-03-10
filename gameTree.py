@@ -1,9 +1,8 @@
-from minimax import e
 import card as card_m
 import board as board_m
 import copy
 import time
-
+from minimax import *
 
 class State:
     """ A state class represents a state which is a node in a game tree.
@@ -24,9 +23,11 @@ class State:
         self.children = []
         self.board_state = board
         self.placed_card = placed_card
+        self.counter = 0
+        self.e_value = 0
+        self.e_array = []
 
     # inserts a new state into the children list
-
     def add_child(self, new_child):
         self.children.append(new_child)
 
@@ -38,6 +39,7 @@ class State:
         self.value = new_value
 
     def generate_best_move_state(self, is_last_depth=False, is_max=True):
+        global nb_e
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
@@ -58,6 +60,9 @@ class State:
                         current_board.place_card(placed_card)
                         if is_last_depth:
                             value = e(current_board)
+                            self.counter += 1
+                            self.e_value = value
+                            self.e_array.append(value)
                         else:
                             value = 0
                         new_state = State(current_board, 1, value, self, placed_card)
@@ -70,7 +75,7 @@ class State:
             self.children = []
 
     # !!!!!!!!!!!!  NEEDS TESTING !!!!!!!!!!!!!!!!!
-    def generate_best_recycled_move_state(self, removed_card, is_max):
+    def generate_best_recycled_move_state(self, removed_card, is_max, game):
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
@@ -98,6 +103,14 @@ class State:
         self.value = best_state.value
         self.children = []
 
+    def get_counter(self):
+        return self.counter
+
+    def get_e_val(self):
+        return self.value
+
+    def get_e_array(self):
+        return self.e_array
 
 class GameTree:
     """ A game tree class where the game tree in getting managed and handled.
@@ -130,24 +143,24 @@ class GameTree:
 
     # !!!!!!!!!!!! NEEDS TESTING !!!!!!!!!!!!!!!!!
     def get_best_recycle_move(self, game, is_max):
-        best_state = None
+        best_state = self.root
         for y in range(self.root.board_state.num_rows):
             # if the row has no cards, we stop
             if self.root.board_state.point_counter_rows[y] == 0:
                 break
             for x in range(self.root.board_state.num_cols):
                 # if the column has no cards, we skip
-                if self.root.board.point_counter_cols[x] == 0 or \
+                if self.root.board_state.point_counter_cols[x] == 0 or \
                    self.root.board_state.matrix[y][x].card == game.last_card_played:
                     continue
                 # if valid remove, we create a new state with removed card
-                if self.root.board.validate_remove(self.root.board_state.matrix[y][x].card):
+                if self.root.board_state.validate_remove(self.root.board_state.matrix[y][x].card):
                     board = copy.deepcopy(self.root.board_state)
                     removed_card = self.root.board_state.matrix[y][x].card
                     board.remove_card(self.root.board_state.matrix[y][x].card)
                     child = State(board, is_max, 0, self.root)
                     # generating best recycling move state for this removed card
-                    child.generate_best_recycled_move_state(removed_card, is_max)
+                    child.generate_best_recycled_move_state(removed_card, is_max, game)
                     if is_max:
                         if best_state.value < child.value:
                             best_state = child
@@ -155,9 +168,9 @@ class GameTree:
                         if best_state.value > child.value:
                             best_state = child
         return best_state
-      
+
     def get_best_state(self, is_max, game):
-        if game.cards_count > 0:   
+        if game.cards_count > 0:
             self.update_root(self.get_best_move(is_max))
             game.cards_count -= 1
         else:
@@ -183,3 +196,6 @@ class GameTree:
         print("Root Board: ")
         self.root.board_state.print_board()
         print("Total Nodes: ", number_of_nodes)
+
+    def get_e(self):
+        return MiniMax.e_call_counter
