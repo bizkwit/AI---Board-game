@@ -308,7 +308,16 @@ while play_again:
 
     try:
         trace_file.close()
+        readFile = open(filename)
+        lines = readFile.readlines()
+        lines = lines[:-1]
+        readFile.close()
+        w = open(filename, 'w')
+        w.writelines([item for item in lines[:-1]])
+        w.close()
         game.trace_nb += 1
+
     except NameError:
         pass
+    
     play_again = get_yes_no_input("\nDo you want to play one more time?")
