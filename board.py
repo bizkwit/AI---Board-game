@@ -126,7 +126,7 @@ class Board:
                         is_valid_remove = False
                 else:
                     # verify if there is any card above
-                    if y2 < self.num_rows - 1 and self.matrix[y2 + 1][x2] is not card_m.emptyPoint:
+                    if self.matrix[y2 + 1][x2] is not card_m.emptyPoint:
                         is_valid_remove = False
         else:
             is_valid_remove = False
