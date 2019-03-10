@@ -87,14 +87,15 @@ class State:
                     if y > 0 and self.board_state.point_counter_cols[x] == 0 \
                             or self.board_state.point_counter_cols[x] == self.board_state.num_rows:
                         continue
-                    placed_card = card_m.get_card(i, x, y)
-                    if placed_card == removed_card:
+                    card = card_m.get_card(i, x, y)
+                    if card == removed_card:
                         continue
-                    if self.board_state.validate_move(placed_card):
+                    if self.board_state.validate_move(card):
                         board = copy.deepcopy(self.board_state)
-                        board.place_card(placed_card)
-                        new_state = State(board, 1, e(board), self, placed_card)
+                        board.place_card(card)
+                        new_state = State(board, 1, e(board), self)
                         self.add_child(new_state)
+                        game.last_card_played = card
         if is_max:
             best_state = max(self.children, key=lambda state: state.value)
         else:
@@ -167,16 +168,13 @@ class GameTree:
                     else:
                         if best_state.value > child.value:
                             best_state = child
-        return best_state
-
+        self.update_root(best_state)
     def get_best_state(self, is_max, game):
         if game.cards_count > 0:
             self.update_root(self.get_best_move(is_max))
             game.cards_count -= 1
         else:
-            self.update_root(self.get_best_recycle_move(game, is_max))
-        if self.root is not None:
-            game.last_card_played = self.root.placed_card
+            self.get_best_recycle_move(game, is_max)
 
     def print_tree(self):
         number_of_nodes = 1
