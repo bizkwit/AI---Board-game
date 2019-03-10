@@ -8,7 +8,6 @@ import os.path
 
 class Game:
     """ Stores all the date related to the game """
-
     # a constructor to initialize the game
     def __init__(self):
         self.cards_count = 24
@@ -150,23 +149,20 @@ def place_card_from_input():
             if game.cards_count > 0:
                 game.cards_count -= 1
 
-# def make_AI_move(is_max, game):
-#     game_tree.get_best_state(player)
-#     board= game_tree.root.board_state
-#     if (game.cards_count == 0):
-#         reutrn
-#     else:
-#         game.cards_count -= 1
 
+
+#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+#||||||||                   START OF GAME                   ||||||||
+#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 play_again = True
-
 print("Welcome to this awesome game")
-
 while play_again:
-
+    #GAME INITIALIZATION
     game = Game()
     board = board_m.Board(12, 8)
     game_tree = gameTree_m.GameTree(gameTree_m.State(board, 0))
+    
+    # ~~~~~~AI MODE~~~~~~
     game.is_AI_mode = get_yes_no_input("Do you want to challenge the AI?")
     if game.is_AI_mode:
         game.is_minimax_trace_required = get_yes_no_input("Do you want to print the Mini-Max Trace?")
@@ -181,6 +177,7 @@ while play_again:
             game.player1_name = "AI"
         else:
             game.player2_name = "AI"
+    # ~~~~~~PLAYER MODE~~~~~~
     else:
         game.is_file_input = get_yes_no_input("Read moves from file?")
         if game.is_file_input:
@@ -188,8 +185,8 @@ while play_again:
             file_input_list = read_file.readlines()
             read_file.close()
 
-    # game.player1_name = input("Player1, tell me your name: ")
-
+    
+    # ~~~~~~GAME MENU + GAME CONFIGURATION~~~~~~
     print("Ok " + game.player1_name + ", you have two options:")
     print("\t1: to play COLOURS\n\t2: to play DOTS")
 
@@ -203,7 +200,6 @@ while play_again:
     else:
         game.is_player1_color_option = False
 
-    # game.player2_name = input("Player2, tell me your name: ")
     if game.is_player1_color_option:
         print(game.player2_name + ", will play DOTS")
     else:
@@ -213,15 +209,15 @@ while play_again:
           "\n\tRecycling move: 'F 2 F 3 3 A 2' or 'f 2 f 3 3 a 2'")
     input("\nPress ENTER.....")
 
+    #~~~~~~ GAMEPLAY ~~~~~~
     board.print_board()
     card_m.print_cards()
-    #game_tree.get_best_state(game.is_current_player1)
-    #game_tree.print_tree()
     while not game.winner_found and game.moves_left >= 0:
         print("\nTurn: " + str(game.moves_max - game.moves_left + 1) + "/" + str(game.moves_max)
               + "\t Cards left: " + str(game.cards_count))
         if game.is_current_player1:
             print(game.player1_name + "'s turn: ", end='')
+            # ~~~~~~ AI MODE ~~~~~~
             if game.is_AI_mode and game.is_AI_player1:
                 start_time = time.time()
                 game_tree.get_best_state(game.is_current_player1, game)
@@ -238,10 +234,12 @@ while play_again:
                 board = game_tree.root.board_state
                 total_time = time.time() - start_time
                 print("--- AI move time: %s seconds ---" % total_time, " \t with value: ", game_tree.root.value)
+            # ~~~~~~ PLAYER MODE ~~~~~~
             else:
                 place_card_from_input()
         else:
             print(game.player2_name + "'s turn: ", end='')
+            # ~~~~~~ AI MODE ~~~~~~
             if game.is_AI_mode and not game.is_AI_player1:
                 start_time = time.time()
                 game_tree.get_best_state(game.is_current_player1, game)
@@ -258,18 +256,14 @@ while play_again:
                 board = game_tree.root.board_state
                 total_time = time.time() - start_time
                 print("--- AI move time: %s seconds ---" % total_time, " \t with value: ", game_tree.root.value)
+            # ~~~~~~ PLAYER MODE ~~~~~~
             else:
                 place_card_from_input()
 
-        # start_time = time.time()
-        # game_tree.get_best_state(game.is_current_player1)
-        # total_time = time.time() - start_time
-        # game_tree.print_tree()
-        # board = game_tree.root.board_state
-        #print("--- method execution time: %s seconds ---" % (total_time))
-
+        
         board.print_board()
         card_m.print_cards()
+        # ~~~~~~ WINNING STATE CHECKER ~~~~~~
         if game.is_AI_move_success is not None and not game.is_AI_move_success:
             if game.is_AI_player1:
                 if game.is_player1_color_option:

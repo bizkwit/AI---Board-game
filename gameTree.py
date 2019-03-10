@@ -31,13 +31,18 @@ class State:
     def add_child(self, new_child):
         self.children.append(new_child)
 
+    # updates the parent node and its board
     def set_parent(self, parent_node):
         self.parent = parent_node
         self.board_state = board_m.Board(parent_node.board_state.num_rows, parent_node.board_state.num_cols)
-
+    
+    # updates board value based on the heuristic function
     def set_state_value(self, new_value):
         self.value = new_value
-
+    
+    # This method generates all the possible moves from a parent state.
+    # At the same time this method evaluates the board based on the heuristic fn
+    # And, checks for the Min/Max of all the children states and update the parent state accordingly 
     def generate_best_move_state(self, is_last_depth, is_max):
         global nb_e
         for i in range(1, 9):  # card state number to get the card
@@ -75,6 +80,8 @@ class State:
             self.children = []
 
     # !!!!!!!!!!!!  NEEDS TESTING !!!!!!!!!!!!!!!!!
+    # The function takes a card to remove and generate all the possible moves out of it
+    # Then, calculate Min/Max and assign to parent state accordingly 
     def generate_best_recycled_move_state(self, removed_card, is_max):
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
@@ -128,10 +135,11 @@ class GameTree:
         self.root = root
 
     # updates the root to the current state
-
     def update_root(self, current_state):
         self.root = current_state
-
+    
+    # This method uses the helper method generate_best_move_state to find Min/Max.
+    # This method does it for 3 levels. FOR A REGULAR MOVE
     def get_best_move(self, is_max):
         self.root.generate_best_move_state(False, is_max)
         for child in self.root.children:
@@ -144,6 +152,8 @@ class GameTree:
         return best_state
 
     # !!!!!!!!!!!! NEEDS TESTING !!!!!!!!!!!!!!!!!
+    # This method uses the helper method generate_best_move_state to find Min/Max.
+    # FOR RECYCLED MOVES
     def get_best_recycle_move(self, game, is_max):
         best_state = None
         for y in range(self.root.board_state.num_rows):
@@ -170,7 +180,9 @@ class GameTree:
                         if best_state is None or best_state.value > child.value:
                             best_state = child
         return best_state
-
+    
+    # This method uses the helper methods get_best_move  -and- get_best_recycle_move
+    # this method keeps track of the cards and calls the helper method accordingly 
     def get_best_state(self, is_max, game):
         if game.cards_count > 0:
             self.update_root(self.get_best_move(is_max))
