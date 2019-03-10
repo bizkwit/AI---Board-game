@@ -175,7 +175,8 @@ class GameTree:
             game.cards_count -= 1
         else:
             self.update_root(self.get_best_recycle_move(game, is_max))
-        game.last_card_played = self.root.placed_card
+        if self.root is not None:
+            game.last_card_played = self.root.placed_card
 
     def print_tree(self):
         number_of_nodes = 1
