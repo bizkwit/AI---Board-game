@@ -38,7 +38,7 @@ class State:
     def set_state_value(self, new_value):
         self.value = new_value
 
-    def generate_best_move_state(self, is_last_depth=False, is_max=True):
+    def generate_best_move_state(self, is_last_depth, is_max):
         global nb_e
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
@@ -54,10 +54,10 @@ class State:
                     if y > 0 and self.board_state.point_counter_cols[x] == 0 \
                             or self.board_state.point_counter_cols[x] == self.board_state.num_rows:
                         continue
-                    placed_card = card_m.get_card(i, x, y)
-                    if self.board_state.validate_move(placed_card):
+                    card = card_m.get_card(i, x, y)
+                    if self.board_state.validate_move(card):
                         current_board = copy.deepcopy(self.board_state)
-                        current_board.place_card(placed_card)
+                        current_board.place_card(card)
                         if is_last_depth:
                             value = e(current_board)
                             self.counter += 1
@@ -65,7 +65,7 @@ class State:
                             self.e_array.append(value)
                         else:
                             value = 0
-                        new_state = State(current_board, 1, value, self, placed_card)
+                        new_state = State(current_board, 1, value, self, card)
                         self.add_child(new_state)
         if is_last_depth:
             if is_max:
@@ -87,19 +87,20 @@ class State:
                     if y > 0 and self.board_state.point_counter_cols[x] == 0 \
                             or self.board_state.point_counter_cols[x] == self.board_state.num_rows:
                         continue
-                    placed_card = card_m.get_card(i, x, y)
-                    if placed_card == removed_card:
+                    card = card_m.get_card(i, x, y)
+                    if card == removed_card:
                         continue
-                    if self.board_state.validate_move(placed_card):
+                    if self.board_state.validate_move(card):
                         board = copy.deepcopy(self.board_state)
-                        board.place_card(placed_card)
-                        new_state = State(board, 1, e(board), self, placed_card)
+                        board.place_card(card)
+                        new_state = State(board, 1, e(board), self, card)
                         self.add_child(new_state)
         if is_max:
             best_state = max(self.children, key=lambda state: state.value)
         else:
             best_state = min(self.children, key=lambda state: state.value)
         self.board_state = best_state.board_state
+        self.placed_card = best_state.placed_card
         self.value = best_state.value
         self.children = []
 
@@ -132,7 +133,7 @@ class GameTree:
         self.root = current_state
 
     def get_best_move(self, is_max):
-        self.root.generate_best_move_state()
+        self.root.generate_best_move_state(False, is_max)
         for child in self.root.children:
             child.generate_best_move_state(True, not is_max)
         # self.root.value, self.root = mm_m.bot(self.root, 2, 1)
@@ -144,7 +145,7 @@ class GameTree:
 
     # !!!!!!!!!!!! NEEDS TESTING !!!!!!!!!!!!!!!!!
     def get_best_recycle_move(self, game, is_max):
-        best_state = self.root
+        best_state = None
         for y in range(self.root.board_state.num_rows):
             # if the row has no cards, we stop
             if self.root.board_state.point_counter_rows[y] == 0:
@@ -163,10 +164,10 @@ class GameTree:
                     # generating best recycling move state for this removed card
                     child.generate_best_recycled_move_state(removed_card, is_max)
                     if is_max:
-                        if best_state.value < child.value:
+                        if best_state is None or best_state.value < child.value:
                             best_state = child
                     else:
-                        if best_state.value > child.value:
+                        if best_state is None or best_state.value > child.value:
                             best_state = child
         return best_state
 
