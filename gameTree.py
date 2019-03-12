@@ -64,7 +64,7 @@ class State:
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
                         if is_last_depth:
-                            value = e(current_board)
+                            value = e2(current_board)
                             self.counter += 1
                             self.e_value = value
                             self.e_array.append(value)
@@ -100,7 +100,7 @@ class State:
                     if self.board_state.validate_move(card):
                         board = copy.deepcopy(self.board_state)
                         board.place_card(card)
-                        new_state = State(board, 1, e(board), self, card)
+                        new_state = State(board, 1, e2(board), self, card)
                         self.add_child(new_state)
         if is_max:
             best_state = max(self.children, key=lambda state: state.value)
@@ -140,7 +140,8 @@ class GameTree:
     
     # This method uses the helper method generate_best_move_state to find Min/Max.
     # This method does it for 3 levels. FOR A REGULAR MOVE
-    def get_best_move(self, is_max):
+    def get_best_move(self):
+        is_max = True
         self.root.generate_best_move_state(False, is_max)
         for child in self.root.children:
             child.generate_best_move_state(True, not is_max)
@@ -154,7 +155,8 @@ class GameTree:
     # !!!!!!!!!!!! NEEDS TESTING !!!!!!!!!!!!!!!!!
     # This method uses the helper method generate_best_move_state to find Min/Max.
     # FOR RECYCLED MOVES
-    def get_best_recycle_move(self, game, is_max):
+    def get_best_recycle_move(self, game):
+        is_max = True
         best_state = None
         for y in range(self.root.board_state.num_rows):
             # if the row has no cards, we stop
@@ -183,12 +185,12 @@ class GameTree:
     
     # This method uses the helper methods get_best_move  -and- get_best_recycle_move
     # this method keeps track of the cards and calls the helper method accordingly 
-    def get_best_state(self, is_max, game):
+    def get_best_state(self, game):
         if game.cards_count > 0:
-            self.update_root(self.get_best_move(is_max))
+            self.update_root(self.get_best_move())
             game.cards_count -= 1
         else:
-            self.update_root(self.get_best_recycle_move(game, is_max))
+            self.update_root(self.get_best_recycle_move(game))
         if self.root is not None:
             game.last_card_played = self.root.placed_card
 
