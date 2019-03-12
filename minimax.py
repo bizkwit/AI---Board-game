@@ -113,11 +113,11 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
             if occurrence[0] != card_m.emptyPoint.value and occurrence[1] >= 4:
                 if occurrence_winner == Winner.DOTS:
                     occurrence_winner = Winner.TIE
-                    result += sign * 500
+                    result *= sign * 500
                     # if we already have a tie, we stop verifying any further
                     break
                 else:
-                    result += sign * 1000
+                    result *= sign * 1000
                     occurrence_winner = Winner.COLORS
                 break  # we found a winner so we stop searching for it
             else:
@@ -129,11 +129,11 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
             if occurrence[0] != card_m.emptyPoint.value and occurrence[1] >= 4:
                 if occurrence_winner == Winner.COLORS:
                     occurrence_winner = Winner.TIE
-                    result += sign * -500
+                    result *= sign * -500
                     # if we already have a tie, we stop verifying any further
                     break
                 else:
-                    result += sign * -1000
+                    result *= sign * -1000
                     occurrence_winner = Winner.DOTS
                 break  # we found a winner so we stop searching for it
             else:
