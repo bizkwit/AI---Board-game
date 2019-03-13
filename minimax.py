@@ -113,15 +113,15 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
             if occurrence[0] != card_m.emptyPoint.value and occurrence[1] >= 4:
                 if occurrence_winner == Winner.DOTS:
                     occurrence_winner = Winner.TIE
-                    result = sign * 5000
+                    result -= 500000  # We make the tie a big negative number but lower then the win
                     # if we already have a tie, we stop verifying any further
                     break
                 else:
-                    result = sign * 10000
+                    result = sign * 1000000
                     occurrence_winner = Winner.COLORS
                 break  # we found a winner so we stop searching for it
             else:
-                result += sign * occurrence[1] + i * 10
+                result += sign * occurrence[1] * (i+2) % 2 * 10
         if occurrence_winner == Winner.TIE:
             break
         # verifying if any consecutive dots
@@ -129,15 +129,15 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
             if occurrence[0] != card_m.emptyPoint.value and occurrence[1] >= 4:
                 if occurrence_winner == Winner.COLORS:
                     occurrence_winner = Winner.TIE
-                    result = sign * -5000
+                    result -= 500000  # We make the tie a big negative number but lower then the win
                     # if we already have a tie, we stop verifying any further
                     break
                 else:
-                    result = sign * -10000
+                    result = sign * -1000000
                     occurrence_winner = Winner.DOTS
                 break  # we found a winner so we stop searching for it
             else:
-                result -= sign * occurrence[1] + i * 10
+                result -= sign * occurrence[1] * (i+2) % 2 * 10
         # if we already have a tie, we stop verifying any further
         if occurrence_winner == Winner.TIE:
             break
