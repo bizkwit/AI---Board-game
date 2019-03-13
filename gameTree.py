@@ -140,11 +140,12 @@ class GameTree:
     
     # This method uses the helper method generate_best_move_state to find Min/Max.
     # This method does it for 3 levels. FOR A REGULAR MOVE
-    def get_best_move(self, is_colors):
+    def get_best_move(self, is_colors ):
         is_max = True
         self.root.generate_best_move_state(False, is_max, is_colors)
         for child in self.root.children:
-            child.generate_best_move_state(True, not is_max, not is_colors)
+            if child.board_state.winner == board_m.Winner.NONE:
+                child.generate_best_move_state(True, not is_max, not is_colors)
         # self.root.value, self.root = mm_m.bot(self.root, 2, 1)
         if is_max:
             best_state = max(self.root.children, key=lambda state: state.value)

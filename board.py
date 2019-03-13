@@ -14,11 +14,12 @@ class Winner(Enum):
 class Board:
     """ Class with all the necessary information and methods for the board """
 
-    def __init__(self, num_rows, num_cols, matrix=None, point_counter_rows=None, point_counter_cols=None):
+    def __init__(self, num_rows, num_cols, matrix=None, point_counter_rows=None, point_counter_cols=None, winner = Winner.NONE):
         self.num_rows = num_rows
         self.num_cols = num_cols
         self.matrix = [[card_m.emptyPoint for j in range(num_cols)] for i in range(num_rows)]
         self.point_counter_rows, self.point_counter_cols = [], []
+        self.winner = winner
         if point_counter_rows is None:
             self.point_counter_rows = [0 for i in range(num_rows)]
         else:
@@ -40,7 +41,7 @@ class Board:
 
     def __deepcopy__(self, memodict={}):
         return Board(self.num_rows, self.num_cols, self.matrix,
-                     self.point_counter_rows, self.point_counter_cols)
+                     self.point_counter_rows, self.point_counter_cols, self.winner)
 
     def print_board(self):
         """ Prints the game board """
