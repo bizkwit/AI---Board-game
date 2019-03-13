@@ -102,9 +102,13 @@ def e2(board, is_colors=True):
 
 
 def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, result):
-    sign = 1
-    if not is_colors:
-        sign = -1
+
+    if is_colors:
+        colors = 2
+        dots = -1
+    else:
+        colors = - 1
+        dots = 2
     for i in range(len(colors_list)):
         occurrences_colors = [(k, len(list(g))) for k, g in groupby(colors_list[i])]
         occurrences_dots = [(k, len(list(g))) for k, g in groupby(dots_list[i])]
@@ -117,11 +121,11 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
                     # if we already have a tie, we stop verifying any further
                     break
                 else:
-                    result = sign * 1000000
+                    result = colors * 1000000
                     occurrence_winner = Winner.COLORS
                 break  # we found a winner so we stop searching for it
             else:
-                result += sign * occurrence[1] * (i+2) % 2 * 10
+                result += colors * occurrence[1] * (i+2) % 2 * 10
         if occurrence_winner == Winner.TIE:
             break
         # verifying if any consecutive dots
@@ -133,11 +137,11 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
                     # if we already have a tie, we stop verifying any further
                     break
                 else:
-                    result = sign * -1000000
+                    result = dots * -1000000
                     occurrence_winner = Winner.DOTS
                 break  # we found a winner so we stop searching for it
             else:
-                result -= sign * occurrence[1] * (i+2) % 2 * 10
+                result -= dots * occurrence[1] * (i+2) % 2 * 10
         # if we already have a tie, we stop verifying any further
         if occurrence_winner == Winner.TIE:
             break
