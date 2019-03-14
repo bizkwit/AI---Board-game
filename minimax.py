@@ -117,11 +117,19 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
             if occurrence[0] != card_m.emptyPoint.value and occurrence[1] >= 4:
                 if occurrence_winner == Winner.DOTS:
                     occurrence_winner = Winner.TIE
+<<<<<<< HEAD
                     result = -500000  # We make the tie a big negative number but lower then the win
                     # if we already have a tie, we stop verifying any further
                     break
                 else:
                     result = colors * 1000000
+=======
+                    result *= sign * 500
+                    # if we already have a tie, we stop verifying any further
+                    break
+                else:
+                    result *= sign * 1000
+>>>>>>> parent of 0f87217... Update minimax.py
                     occurrence_winner = Winner.COLORS
                 break  # we found a winner so we stop searching for it
             else:
@@ -133,11 +141,19 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
             if occurrence[0] != card_m.emptyPoint.value and occurrence[1] >= 4:
                 if occurrence_winner == Winner.COLORS:
                     occurrence_winner = Winner.TIE
+<<<<<<< HEAD
                     result = -500000  # We make the tie a big negative number but lower then the win
                     # if we already have a tie, we stop verifying any further
                     break
                 else:
                     result = dots * -1000000
+=======
+                    result *= sign * -500
+                    # if we already have a tie, we stop verifying any further
+                    break
+                else:
+                    result *= sign * -1000
+>>>>>>> parent of 0f87217... Update minimax.py
                     occurrence_winner = Winner.DOTS
                 break  # we found a winner so we stop searching for it
             else:
