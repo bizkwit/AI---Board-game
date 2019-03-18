@@ -125,7 +125,7 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
                     # if we already have a tie, we stop verifying any further
                     break
                 else:
-                    result *= 1000
+                    result = colors * 1000000
                     occurrence_winner = Winner.COLORS
                 break  # we found a winner so we stop searching for it
             else:
