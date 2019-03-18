@@ -61,15 +61,15 @@ class State:
                         continue
                     card = card_m.get_card(i, x, y)
                     if self.board_state.validate_move(card):
+
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
+
+                        value = e2(current_board, is_colors, is_max)
                         if is_last_depth:
-                            value = e2(current_board, is_colors)
                             self.counter += 1
                             self.e_value = value
                             self.e_array.append(value)
-                        else:
-                            value = 0
                         new_state = State(current_board, 1, value, self, card)
                         self.add_child(new_state)
         if is_last_depth:
@@ -78,6 +78,7 @@ class State:
             else:
                 self.value = min(child.value for child in self.children)
             self.children = []
+
 
     # !!!!!!!!!!!!  NEEDS TESTING !!!!!!!!!!!!!!!!!
     # The function takes a card to remove and generate all the possible moves out of it
@@ -142,15 +143,14 @@ class GameTree:
     # This method does it for 3 levels. FOR A REGULAR MOVE
     def get_best_move(self, is_colors):
         is_max = True
-        self.root.generate_best_move_state(False, is_max, is_colors)
+        is_last_depth = True
+        self.root.generate_best_move_state(not is_last_depth, is_max, is_colors)
         for child in self.root.children:
             if child.board_state.winner == board_m.Winner.NONE:
-                child.generate_best_move_state(True, not is_max, is_colors)
+                child.generate_best_move_state(is_last_depth, not is_max, not is_colors)
         # self.root.value, self.root = mm_m.bot(self.root, 2, 1)
-        if is_max:
-            best_state = max(self.root.children, key=lambda state: state.value)
-        else:
-            best_state = min(self.root.children, key=lambda state: state.value)
+
+        best_state = max(self.root.children, key=lambda state: state.value)
         return best_state
 
     # !!!!!!!!!!!! NEEDS TESTING !!!!!!!!!!!!!!!!!
@@ -190,7 +190,9 @@ class GameTree:
         is_colors = game.is_AI_player1 and game.is_player1_color_option or \
                    not (game.is_AI_player1 or game.is_player1_color_option)
         if game.cards_count > 0:
-            self.update_root(self.get_best_move(is_colors))
+            best_state = self.get_best_move(is_colors)
+            # self.print_tree()
+            self.update_root(best_state)
             game.cards_count -= 1
         else:
             self.update_root(self.get_best_recycle_move(game, is_colors))

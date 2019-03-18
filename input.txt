@@ -140,5 +140,19 @@ n
 0 8 f 1
 0 7 d 3
 
+y
+n
+y
+1
+.
+0 1 a 1
+0 6 c 1
+0 2 d 1
+0 2 e 1
+0 5 a 2
+0 5 a 3
+0 7 a 5
+0 3 c 3
+
 
 we don't have to generate any further nodes if the winner was found for the parent
