@@ -61,7 +61,6 @@ class State:
                         continue
                     card = card_m.get_card(i, x, y)
                     if self.board_state.validate_move(card):
-
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
 
