@@ -14,7 +14,8 @@ class Winner(Enum):
 class Board:
     """ Class with all the necessary information and methods for the board """
 
-    def __init__(self, num_rows, num_cols, matrix=None, point_counter_rows=None, point_counter_cols=None, winner = Winner.NONE):
+    def __init__(self, num_rows, num_cols, matrix=None, point_counter_rows=None, point_counter_cols=None,
+                 winner=Winner.NONE):
         self.num_rows = num_rows
         self.num_cols = num_cols
         self.matrix = [[card_m.emptyPoint for j in range(num_cols)] for i in range(num_rows)]
@@ -34,7 +35,7 @@ class Board:
         if matrix is not None:
             for i in range(num_rows):
                 for j in range(num_cols):
-                    if matrix[i][j].card is not None and self.matrix[i][j].card is None:
+                    if matrix[i][j] is not card_m.emptyPoint and self.matrix[i][j] is card_m.emptyPoint:
                         card = copy.deepcopy(matrix[i][j].card)
                         self.matrix[card.p1.y_coord][card.p1.x_coord] = card.p1
                         self.matrix[card.p2.y_coord][card.p2.x_coord] = card.p2
@@ -50,7 +51,7 @@ class Board:
             y -= 1
             print("\n" + str(row), end='')
             for x in range(self.num_cols):
-                if self.matrix[y][x].card is None:
+                if self.matrix[y][x] is card_m.emptyPoint:
                     print("\t_", end='')
                 else:
                     print("\t" + self.matrix[y][x].value, end='')
@@ -92,24 +93,24 @@ class Board:
         # verifying if it is in our board range
         if 0 <= x1 < self.num_cols and 0 <= y1 < self.num_rows and 0 <= x2 < self.num_cols and 0 <= y2 < self.num_rows:
             # verifying if there is already a card in the desired position
-            if self.matrix[y1][x1].card is not None or self.matrix[y2][x2].card is not None:
+            if self.matrix[y1][x1] is not card_m.emptyPoint or self.matrix[y2][x2] is not card_m.emptyPoint:
                 is_valid_move = False
             # if card is placed in the first row, we verify ONLY if x1 and x2 are inside the board range
             elif y1 > 0:
                 if card.is_horizontal:
                     # verifying if there is blank space under the desired placement of the horizontal card
-                    if self.matrix[y1 - 1][x1].card is None or self.matrix[y2 - 1][x2].card is None:
+                    if self.matrix[y1 - 1][x1] is card_m.emptyPoint or self.matrix[y2 - 1][x2] is card_m.emptyPoint:
                         is_valid_move = False
                 else:
                     # verifying if there is blank space under the desired placement of the vertical card
-                    if self.matrix[y1 - 1][x1].card is None:
+                    if self.matrix[y1 - 1][x1] is card_m.emptyPoint:
                         is_valid_move = False
         else:
             is_valid_move = False
         if is_valid_move and place_card:
             self.place_card(card)
         return is_valid_move
-    
+
     def validate_remove(self, placed_card, remove_card=False):
         if placed_card is not None:
             is_valid_remove = True
@@ -123,7 +124,7 @@ class Board:
                 if placed_card.is_horizontal:
                     # verify if there is any card above for horizontally placed card
                     if self.matrix[y1 + 1][x1] is not card_m.emptyPoint or \
-                       self.matrix[y2 + 1][x2] is not card_m.emptyPoint:
+                            self.matrix[y2 + 1][x2] is not card_m.emptyPoint:
                         is_valid_remove = False
                 else:
                     # verify if there is any card above
@@ -131,10 +132,10 @@ class Board:
                         is_valid_remove = False
         else:
             is_valid_remove = False
-        if remove_card and is_valid_remove:       
+        if remove_card and is_valid_remove:
             self.remove_card(placed_card)
         return is_valid_remove
-                        
+
     def place_recycling_move(self, placed_card, new_card):
         """ Validate a recycling move"""
         if new_card is not None and placed_card != new_card:
@@ -143,9 +144,9 @@ class Board:
                 y1 = placed_card.p1.y_coord
                 x2 = placed_card.p2.x_coord
                 y2 = placed_card.p2.y_coord
-                
+
                 self.matrix[y1][x1] = card_m.emptyPoint
-                self.matrix[y2][x2] = card_m.emptyPoint                
+                self.matrix[y2][x2] = card_m.emptyPoint
                 is_valid_move = self.validate_move(new_card)
                 # restore the points if the move cannot be made
                 if not is_valid_move:
