@@ -82,10 +82,8 @@ def e2(board, is_colors=True, is_max=True):
             rows_dots[y] += board.matrix[y][x].dot
             cols_colors[x] += board.matrix[y][x].color
             cols_dots[x] += board.matrix[y][x].dot
-            #if x > 2:
             diag_front_colors[x + y] += board.matrix[y][x].color
             diag_front_dots[x + y] += board.matrix[y][x].dot
-            #if x < 5:
             diag_back_colors[-min_diag + x - y] += board.matrix[y][x].color
             diag_back_dots[-min_diag + x - y] += board.matrix[y][x].dot
 
