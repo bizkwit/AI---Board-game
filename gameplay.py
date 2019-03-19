@@ -120,7 +120,9 @@ def place_card_from_input():
             x1 = input_list[2]
             y1 = input_list[3] - 1
             card = card_m.get_card(input_list[1], x1, y1)
-            is_valid_move = board.validate_move(card, True)
+            is_valid_move = board.validate_move(card)
+            if is_valid_move:
+                board.place_card(card)
         else:  # this is a recycling move
             x1 = input_list[0]
             y1 = input_list[1] - 1
