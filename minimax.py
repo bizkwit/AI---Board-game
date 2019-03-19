@@ -96,7 +96,7 @@ def e2(board, is_colors=True, is_max=True):
         result, occurrence_winner = verify_occurences(arrays_of_colors_and_dots[i],
                                                       arrays_of_colors_and_dots[i + 1], occurrence_winner, is_colors,
                                                       result, is_max)
-    return result, occurrence_winner
+    return result  #, occurrence_winner
 
 
 def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, result, is_max):
