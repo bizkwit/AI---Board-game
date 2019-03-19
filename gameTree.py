@@ -4,6 +4,7 @@ import copy
 import time
 from minimax import *
 
+
 class State:
     """ A state class represents a state which is a node in a game tree.
         A state is a possible next move that can be made.
@@ -35,11 +36,11 @@ class State:
     def set_parent(self, parent_node):
         self.parent = parent_node
         self.board_state = board_m.Board(parent_node.board_state.num_rows, parent_node.board_state.num_cols)
-    
+
     # updates board value based on the heuristic function
     def set_state_value(self, new_value):
         self.value = new_value
-    
+
     # This method generates all the possible moves from a parent state.
     # At the same time this method evaluates the board based on the heuristic fn
     # And, checks for the Min/Max of all the children states and update the parent state accordingly 
@@ -60,7 +61,7 @@ class State:
                             or self.board_state.point_counter_cols[x] == self.board_state.num_rows:
                         continue
                     card = card_m.get_card(i, x, y)
-                    if self.board_state.validate_move(card):
+                    if self.board_state.validate_move(card, True):
                         current_board = copy.deepcopy(self.board_state)
                         current_board.place_card(card)
 
@@ -77,7 +78,6 @@ class State:
             else:
                 self.value = min(child.value for child in self.children)
             self.children = []
-
 
     # !!!!!!!!!!!!  NEEDS TESTING !!!!!!!!!!!!!!!!!
     # The function takes a card to remove and generate all the possible moves out of it
@@ -137,7 +137,7 @@ class GameTree:
     # updates the root to the current state
     def update_root(self, current_state):
         self.root = current_state
-    
+
     # This method uses the helper method generate_best_move_state to find Min/Max.
     # This method does it for 3 levels. FOR A REGULAR MOVE
     def get_best_move(self, is_colors):
@@ -165,7 +165,7 @@ class GameTree:
             for x in range(self.root.board_state.num_cols):
                 # if the column has no cards, we skip
                 if self.root.board_state.point_counter_cols[x] == 0 or \
-                   self.root.board_state.matrix[y][x].card == game.last_card_played:
+                        self.root.board_state.matrix[y][x].card == game.last_card_played:
                     continue
                 # if valid remove, we create a new state with removed card
                 if self.root.board_state.validate_remove(self.root.board_state.matrix[y][x].card):
@@ -182,12 +182,12 @@ class GameTree:
                         if best_state is None or best_state.value > child.value:
                             best_state = child
         return best_state
-    
+
     # This method uses the helper methods get_best_move  -and- get_best_recycle_move
     # this method keeps track of the cards and calls the helper method accordingly 
     def get_best_state(self, game):
         is_colors = game.is_AI_player1 and game.is_player1_color_option or \
-                   not (game.is_AI_player1 or game.is_player1_color_option)
+                    not (game.is_AI_player1 or game.is_player1_color_option)
         if game.cards_count > 0:
             best_state = self.get_best_move(is_colors)
             # self.print_tree()
