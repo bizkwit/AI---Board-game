@@ -4,7 +4,6 @@ import card as card_m
 
 
 class MiniMax:
-
     matrix_point_value = None
     e_call_counter = 0
 
@@ -95,7 +94,8 @@ def e2(board, is_colors=True, is_max=True):
         if occurrence_winner == Winner.TIE:
             break
         result, occurrence_winner = verify_occurences(arrays_of_colors_and_dots[i],
-                                    arrays_of_colors_and_dots[i + 1], occurrence_winner, is_colors, result, is_max)
+                                                      arrays_of_colors_and_dots[i + 1], occurrence_winner, is_colors,
+                                                      result, is_max)
     return result, occurrence_winner
 
 
