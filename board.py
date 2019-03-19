@@ -82,7 +82,7 @@ class Board:
         self.point_counter_cols[x] -= 1
         self.point_counter_rows[y] -= 1
 
-    def validate_move(self, card, place_card=False):
+    def validate_move(self, card, is_ai_move=False):
         """ Validate a regular move"""
         is_valid_move = True
         x1 = card.p1.x_coord
@@ -93,22 +93,39 @@ class Board:
         # verifying if it is in our board range
         if 0 <= x1 < self.num_cols and 0 <= y1 < self.num_rows and 0 <= x2 < self.num_cols and 0 <= y2 < self.num_rows:
             # verifying if there is already a card in the desired position
+            # if card is placed in the first row, we verify ONLY if x1 and x2 are inside the board range
             if self.matrix[y1][x1] is not card_m.emptyPoint or self.matrix[y2][x2] is not card_m.emptyPoint:
                 is_valid_move = False
-            # if card is placed in the first row, we verify ONLY if x1 and x2 are inside the board range
             elif y1 > 0:
                 if card.is_horizontal:
                     # verifying if there is blank space under the desired placement of the horizontal card
-                    if self.matrix[y1 - 1][x1] is card_m.emptyPoint or self.matrix[y2 - 1][x2] is card_m.emptyPoint:
+                    if self.matrix[y1-1][x1] is card_m.emptyPoint or self.matrix[y2-1][x2] is card_m.emptyPoint:
                         is_valid_move = False
                 else:
                     # verifying if there is blank space under the desired placement of the vertical card
                     if self.matrix[y1 - 1][x1] is card_m.emptyPoint:
                         is_valid_move = False
+            if is_ai_move and y1 == 0 and self.point_counter_rows[y1] > 0:
+                if card.is_horizontal:
+                    if x1 == 0:
+                        if self.matrix[y2][x2 + 1] is card_m.emptyPoint:
+                            is_valid_move = False
+                    elif x2 == self.num_cols - 1:
+                        if self.matrix[y1][x1-1] is card_m.emptyPoint:
+                            is_valid_move = False
+                    elif self.matrix[y1][x1-1] is card_m.emptyPoint and self.matrix[y2][x2 + 1] is card_m.emptyPoint:
+                        is_valid_move = False
+                else:
+                    if x1 == 0:
+                        if self.matrix[y1][x1 + 1] is card_m.emptyPoint:
+                            is_valid_move = False
+                    elif x1 == self.num_cols - 1:
+                        if self.matrix[y1][x1-1] is card_m.emptyPoint:
+                            is_valid_move = False
+                    elif self.matrix[y1][x1-1] is card_m.emptyPoint and self.matrix[y1][x1 + 1] is card_m.emptyPoint:
+                        is_valid_move = False
         else:
             is_valid_move = False
-        if is_valid_move and place_card:
-            self.place_card(card)
         return is_valid_move
 
     def validate_remove(self, placed_card, remove_card=False):
