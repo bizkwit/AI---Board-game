@@ -14,35 +14,32 @@ class Winner(Enum):
 class Board:
     """ Class with all the necessary information and methods for the board """
 
-    def __init__(self, num_rows, num_cols, matrix=None, point_counter_rows=None, point_counter_cols=None,
-                 winner=Winner.NONE):
+    def __init__(self, num_rows, num_cols, board=None):
         self.num_rows = num_rows
         self.num_cols = num_cols
         self.matrix = [[card_m.emptyPoint for j in range(num_cols)] for i in range(num_rows)]
         self.point_counter_rows, self.point_counter_cols = [], []
-        self.winner = winner
-        if point_counter_rows is None:
+        if board is None:
+            self.winner = Winner.NONE
+            self.last_card_played = None
             self.point_counter_rows = [0 for i in range(num_rows)]
-        else:
-            for counter in point_counter_rows:
-                self.point_counter_rows.append(counter)
-        if point_counter_rows is None:
             self.point_counter_cols = [0 for i in range(num_cols)]
         else:
-            for counter in point_counter_cols:
+            self.winner = board.winner
+            self.last_card_played = board.last_card_played
+            for counter in board.point_counter_rows:
+                self.point_counter_rows.append(counter)
+            for counter in board.point_counter_cols:
                 self.point_counter_cols.append(counter)
-
-        if matrix is not None:
             for i in range(num_rows):
                 for j in range(num_cols):
-                    if matrix[i][j] is not card_m.emptyPoint and self.matrix[i][j] is card_m.emptyPoint:
-                        card = copy.deepcopy(matrix[i][j].card)
+                    if board.matrix[i][j] is not card_m.emptyPoint and self.matrix[i][j] is card_m.emptyPoint:
+                        card = copy.deepcopy(board.matrix[i][j].card)
                         self.matrix[card.p1.y_coord][card.p1.x_coord] = card.p1
                         self.matrix[card.p2.y_coord][card.p2.x_coord] = card.p2
 
     def __deepcopy__(self, memodict={}):
-        return Board(self.num_rows, self.num_cols, self.matrix,
-                     self.point_counter_rows, self.point_counter_cols, self.winner)
+        return Board(self.num_rows, self.num_cols, self)
 
     def print_board(self):
         """ Prints the game board """
@@ -69,6 +66,7 @@ class Board:
         self.matrix[y][x] = card.p2
         self.point_counter_cols[x] += 1
         self.point_counter_rows[y] += 1
+        self.last_card_played = card
 
     def remove_card(self, card):
         x = card.p1.x_coord
@@ -153,8 +151,9 @@ class Board:
             self.remove_card(placed_card)
         return is_valid_remove
 
-    def place_recycling_move(self, placed_card, new_card):
+    def place_recycling_move(self, new_card):
         """ Validate a recycling move"""
+        placed_card = self.last_card_played
         if new_card is not None and placed_card != new_card:
             if self.validate_remove(placed_card):
                 x1 = placed_card.p1.x_coord

@@ -96,20 +96,17 @@ def e2(board, is_colors=True, is_max=True):
         result, occurrence_winner = verify_occurences(arrays_of_colors_and_dots[i],
                                                       arrays_of_colors_and_dots[i + 1], occurrence_winner, is_colors,
                                                       result, is_max)
-    return result  #, occurrence_winner
+    board.winner = occurrence_winner
+    return result
 
 
 def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, result, is_max):
-    if is_colors:
-        colors = -2
-        dots = 1
-    else:
+    if is_colors and is_max:
         colors = 1
-        dots = -2
-
-    if is_max:
-        colors *= -1
-        dots *= -1
+        dots = -1
+    else:
+        colors = -1
+        dots = 1
 
     for i in range(len(colors_list)):
         occurrences_colors = [(k, len(list(g))) for k, g in groupby(colors_list[i])]
@@ -119,15 +116,16 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
             if occurrence[0] != card_m.emptyPoint.value and occurrence[1] >= 4:
                 if occurrence_winner == Winner.DOTS:
                     occurrence_winner = Winner.TIE
-                    result = -500000  # We make the tie a big negative number but higher then the loss
+                    # result += dots * 10000
+                    result += -500000  # We make the tie a big negative number but higher then the loss
                     # if we already have a tie, we stop verifying any further
                     break
                 else:
-                    result = colors * 1000000
                     occurrence_winner = Winner.COLORS
+                    result += colors * 10000
                 break  # we found a winner so we stop searching for it
             else:
-                result += colors * occurrence[1]
+                result += colors * occurrence[1]*occurrence[1]*occurrence[1]
         if occurrence_winner == Winner.TIE:
             break
         # verifying if any consecutive dots
@@ -135,15 +133,16 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
             if occurrence[0] != card_m.emptyPoint.value and occurrence[1] >= 4:
                 if occurrence_winner == Winner.COLORS:
                     occurrence_winner = Winner.TIE
-                    result = -500000  # We make the tie a big negative number but higher then the loss
+                    # result += colors * 10000
+                    result += -500000  # We make the tie a big negative number but higher then the loss
                     # if we already have a tie, we stop verifying any further
                     break
                 else:
-                    result = dots * 1000000
                     occurrence_winner = Winner.DOTS
+                    result += dots * 10000
                 break  # we found a winner so we stop searching for it
             else:
-                result += dots * occurrence[1]
+                result += dots * occurrence[1]*occurrence[1]*occurrence[1]
         # if we already have a tie, we stop verifying any further
         if occurrence_winner == Winner.TIE:
             break

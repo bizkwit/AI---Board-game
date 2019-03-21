@@ -11,7 +11,7 @@ class Game:
     # a constructor to initialize the game
     def __init__(self):
         self.cards_count = 24
-        self.last_card_played = None
+        # self.last_card_played = None
         self.moves_max = 60
         self.moves_left = 60
 
@@ -134,20 +134,18 @@ def place_card_from_input():
                 new_x1 = input_list[5]
                 new_y1 = input_list[6] - 1
                 card = card_m.get_card(input_list[4], new_x1, new_y1)
-                if placed_card == game.last_card_played:
+                if placed_card == board.last_card_played:
                     print(" *** You can't recycle the last-played card ***")
                 elif placed_card == card:
                     print(" *** You must change card's rotation, position or both ***")
                 else:
-                    is_valid_move = board.place_recycling_move(placed_card, card)
-                    game.last_card_played
+                    is_valid_move = board.place_recycling_move(card)
         if not is_valid_move:
             if game.is_file_input:
                 game.is_file_input = False
                 print("Next moves will be done in manual mode.")
             input_list = get_valid_input("Input not valid, try again: ")
         else:
-            game.last_card_played = card
             if game.cards_count > 0:
                 game.cards_count -= 1
 

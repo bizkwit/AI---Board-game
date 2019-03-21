@@ -45,6 +45,7 @@ class State:
     # At the same time this method evaluates the board based on the heuristic fn
     # And, checks for the Min/Max of all the children states and update the parent state accordingly 
     def generate_best_move_state(self, is_last_depth, is_max, is_colors):
+        self.children = []
         global nb_e
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
@@ -77,12 +78,12 @@ class State:
                 self.value = max(child.value for child in self.children)
             else:
                 self.value = min(child.value for child in self.children)
-            self.children = []
 
     # !!!!!!!!!!!!  NEEDS TESTING !!!!!!!!!!!!!!!!!
     # The function takes a card to remove and generate all the possible moves out of it
     # Then, calculate Min/Max and assign to parent state accordingly 
     def generate_best_recycled_move_state(self, removed_card, is_max, is_colors):
+        self.children = []
         for i in range(1, 9):  # card state number to get the card
             for y in range(0, self.board_state.num_rows):
                 # if there is no card under previous row, we don't check next rows
@@ -109,7 +110,6 @@ class State:
         self.board_state = best_state.board_state
         self.placed_card = best_state.placed_card
         self.value = best_state.value
-        self.children = []
 
     def get_counter(self):
         return self.counter
