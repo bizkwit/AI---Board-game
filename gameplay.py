@@ -10,10 +10,11 @@ class Game:
     """ Stores all the date related to the game """
     # a constructor to initialize the game
     def __init__(self):
-        self.cards_count = 24
+        self.max_cards = 24
+        self.cards_count = self.max_cards
         # self.last_card_played = None
         self.moves_max = 60
-        self.moves_left = 60
+        self.moves_left = self.moves_max
 
         self.is_AI_mode = False
         self.is_AI_player1 = None
@@ -34,6 +35,25 @@ class Game:
 
 
 letterConversion = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H": 7}
+
+
+def get_input_equivalent(card, previous_card=None):
+    move_string = ""
+    if card is None:
+        return move_string
+    elif game.moves_max - game.moves_left < game.max_cards:   #regular move
+        move_string = "0 " + str(card.cofig_num) + " " + \
+                        list(letterConversion.keys())[list(letterConversion.values()).index(card.p1.x_coord)]\
+                        + " " + str(card.p1.y_coord + 1)
+    elif previous_card is not None:
+        move_string = list(letterConversion.keys())[list(letterConversion.values()).index(previous_card.p1.x_coord)]\
+            + " " + str(previous_card.p1.y_coord+1)\
+            + " " + list(letterConversion.keys())[list(letterConversion.values()).index(previous_card.p2.x_coord)]\
+            + " " + str(previous_card.p2.y_coord+1) + " " + str(card.cofig_num)\
+            + " " + list(letterConversion.keys())[list(letterConversion.values()).index(card.p1.x_coord)]\
+            + " " + str(card.p1.y_coord+1)
+    return move_string
+
 
 def try_parse_int(s):
     try:
@@ -161,7 +181,7 @@ while play_again:
     game = Game()
     board = board_m.Board(12, 8)
     game_tree = gameTree_m.GameTree(gameTree_m.State(board, 0))
-    
+
     # ~~~~~~AI MODE~~~~~~
     game.is_AI_mode = get_yes_no_input("Do you want to challenge the AI?")
     if game.is_AI_mode:
@@ -185,7 +205,7 @@ while play_again:
             file_input_list = read_file.readlines()
             read_file.close()
 
-    
+
     # ~~~~~~GAME MENU + GAME CONFIGURATION~~~~~~
     print("Ok " + game.player1_name + ", you have two options:")
     print("\t1: to play COLOURS\n\t2: to play DOTS")
@@ -221,6 +241,10 @@ while play_again:
             if game.is_AI_mode and game.is_AI_player1:
                 start_time = time.time()
                 game_tree.get_best_state(game)
+                total_time = time.time() - start_time
+
+                move_string = get_input_equivalent(game_tree.root.board_state.last_card_played, board.last_card_played)
+
                 if game.is_minimax_trace_required:
                     e_times = repr(MiniMax.e_call_counter) + "\n"
                     e_value = "{:.1f}".format(game_tree.root.value) + "\n"
@@ -232,8 +256,9 @@ while play_again:
                         trace_file.write("%s\n" % item)
                     trace_file.write("\n")
                 board = game_tree.root.board_state
-                total_time = time.time() - start_time
                 print("--- AI move time: %s seconds ---" % total_time, " \t with value: ", game_tree.root.value)
+                print("=== AI move: ", move_string, " ===")
+                move_string = ""
             # ~~~~~~ PLAYER MODE ~~~~~~
             else:
                 place_card_from_input()
@@ -243,6 +268,8 @@ while play_again:
             if game.is_AI_mode and not game.is_AI_player1:
                 start_time = time.time()
                 game_tree.get_best_state(game)
+                total_time = time.time() - start_time
+                move_string = get_input_equivalent(game_tree.root.board_state.last_card_played, board.last_card_played)
                 if game.is_minimax_trace_required:
                     e_times = repr(MiniMax.e_call_counter) + "\n"
                     e_value = "{:.1f}".format(game_tree.root.value) + "\n"
@@ -254,13 +281,14 @@ while play_again:
                         trace_file.write("%s\n" % item)
                     trace_file.write("\n")
                 board = game_tree.root.board_state
-                total_time = time.time() - start_time
                 print("--- AI move time: %s seconds ---" % total_time, " \t with value: ", game_tree.root.value)
+                print("=== AI move: ", move_string, " ===")
+                move_string = ""
             # ~~~~~~ PLAYER MODE ~~~~~~
             else:
                 place_card_from_input()
 
-        
+
         board.print_board()
         card_m.print_cards()
         # ~~~~~~ WINNING STATE CHECKER ~~~~~~
@@ -285,6 +313,7 @@ while play_again:
         elif game.winner == board_m.Winner.TIE:
             game.moves_left = 0
         game.moves_left -= 1
+
     print("=================================")
     if not game.winner_found:
         print("Game ended with a tie")
@@ -313,5 +342,5 @@ while play_again:
 
     except NameError:
         pass
-    
+
     play_again = get_yes_no_input("\nDo you want to play one more time?")
