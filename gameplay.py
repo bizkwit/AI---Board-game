@@ -13,7 +13,7 @@ class Game:
         self.max_cards = 24
         self.cards_count = self.max_cards
         # self.last_card_played = None
-        self.moves_max = 60
+        self.moves_max = 40
         self.moves_left = self.moves_max
 
         self.is_AI_mode = False
