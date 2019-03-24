@@ -26,7 +26,7 @@ class Board:
             self.point_counter_cols = [0 for i in range(num_cols)]
         else:
             self.winner = board.winner
-            self.last_card_played = board.last_card_played
+            self.last_card_played = copy.deepcopy(board.last_card_played)
             for counter in board.point_counter_rows:
                 self.point_counter_rows.append(counter)
             for counter in board.point_counter_cols:
@@ -50,6 +50,8 @@ class Board:
             for x in range(self.num_cols):
                 if self.matrix[y][x] is card_m.emptyPoint:
                     print("\t_", end='')
+                elif self.matrix[y][x].card == self.last_card_played:
+                    print("\tL" + self.matrix[y][x].value, end='')
                 else:
                     print("\t" + self.matrix[y][x].value, end='')
         print("\n\n\tA\tB\tC\tD\tE\tF\tG\tH")
@@ -127,7 +129,7 @@ class Board:
         return is_valid_move
 
     def validate_remove(self, placed_card, remove_card=False):
-        if placed_card is not None:
+        if placed_card is not None and placed_card != self.last_card_played:
             is_valid_remove = True
             x1 = placed_card.p1.x_coord
             y1 = placed_card.p1.y_coord
@@ -151,9 +153,9 @@ class Board:
             self.remove_card(placed_card)
         return is_valid_remove
 
-    def place_recycling_move(self, new_card):
+    def place_recycling_move(self, placed_card, new_card):
         """ Validate a recycling move"""
-        placed_card = self.last_card_played
+
         if new_card is not None and placed_card != new_card:
             if self.validate_remove(placed_card):
                 x1 = placed_card.p1.x_coord

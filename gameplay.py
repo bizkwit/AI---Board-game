@@ -159,7 +159,7 @@ def place_card_from_input():
                 elif placed_card == card:
                     print(" *** You must change card's rotation, position or both ***")
                 else:
-                    is_valid_move = board.place_recycling_move(card)
+                    is_valid_move = board.place_recycling_move(placed_card, card)
         if not is_valid_move:
             if game.is_file_input:
                 game.is_file_input = False
