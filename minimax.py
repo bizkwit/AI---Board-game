@@ -111,7 +111,6 @@ def verify_occurences(colors_list, dots_list, occurrence_winner, is_colors, resu
         colors = -1*colors
         dots = -1*dots
 
-
     for i in range(len(colors_list)):
         occurrences_colors = [(k, len(list(g))) for k, g in groupby(colors_list[i])]
         occurrences_dots = [(k, len(list(g))) for k, g in groupby(dots_list[i])]
