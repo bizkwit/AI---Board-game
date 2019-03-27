@@ -1,5 +1,4 @@
 import board as board_m
-import card as card_m
 import gameTree as gameTree_m
 import time
 from minimax import *

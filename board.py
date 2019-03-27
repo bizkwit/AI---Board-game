@@ -50,8 +50,8 @@ class Board:
             for x in range(self.num_cols):
                 if self.matrix[y][x] is card_m.emptyPoint:
                     print("\t_", end='')
-                elif self.matrix[y][x].card == self.last_card_played:
-                    print("\tL" + self.matrix[y][x].value, end='')
+                # elif self.matrix[y][x].card == self.last_card_played:
+                #     print("\tL" + self.matrix[y][x].value, end='')
                 else:
                     print("\t" + self.matrix[y][x].value, end='')
         print("\n\n\tA\tB\tC\tD\tE\tF\tG\tH")

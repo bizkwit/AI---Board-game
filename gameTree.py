@@ -1,7 +1,5 @@
-import card as card_m
 import board as board_m
 import copy
-import time
 from minimax import *
 
 
@@ -16,14 +14,12 @@ class State:
         - children = a list of states as the children states
     """
 
-    def __init__(self, board, current_player=0, current_value=0, parent_state=None, placed_card=None):
+    def __init__(self, board, current_value=0, parent_state=None):
 
-        self.player = current_player
         self.value = current_value
         self.parent = parent_state
         self.children = []
         self.board_state = board
-        self.placed_card = placed_card
         self.counter = 0
         self.e_value = 0
         self.e_array = []
@@ -71,7 +67,7 @@ class State:
                             self.counter += 1
                             self.e_value = value
                             self.e_array.append(value)
-                        new_state = State(current_board, 1, value, self, card)
+                        new_state = State(current_board, value, self)
                         self.add_child(new_state)
         if is_last_depth:
             if is_max:
@@ -101,14 +97,13 @@ class State:
                     if self.board_state.validate_move(card):
                         board = copy.deepcopy(self.board_state)
                         board.place_card(card)
-                        new_state = State(board, 1, e2(board, is_colors), self, card)
+                        new_state = State(board, e2(board, is_colors), self)
                         self.add_child(new_state)
         if is_max:
             best_state = max(self.children, key=lambda state: state.value)
         else:
             best_state = min(self.children, key=lambda state: state.value)
         self.board_state = best_state.board_state
-        self.placed_card = best_state.placed_card
         self.value = best_state.value
 
     def get_counter(self):
@@ -172,7 +167,7 @@ class GameTree:
                     board = copy.deepcopy(self.root.board_state)
                     removed_card = self.root.board_state.matrix[y][x].card
                     board.remove_card(self.root.board_state.matrix[y][x].card)
-                    child = State(board, is_max, 0, self.root)
+                    child = State(board, 0, self.root)
                     # generating best recycling move state for this removed card
                     child.generate_best_recycled_move_state(removed_card, is_max, is_colors)
                     if is_max:
@@ -195,8 +190,6 @@ class GameTree:
             game.cards_count -= 1
         else:
             self.update_root(self.get_best_recycle_move(game, is_colors))
-        if self.root is not None:
-            game.last_card_played = self.root.placed_card
 
     def print_tree(self):
         number_of_nodes = 1
